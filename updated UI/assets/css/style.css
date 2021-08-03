@@ -6192,7 +6192,12 @@ del {
     font-size: 6px;
     color: #fd2530;
     width: 53%;
+}
 
+.redeem-btn{
+    border-radius: 23px;
+    padding: 15px 25px !important;
+    font-size: 11px !important;
 }
 
 
