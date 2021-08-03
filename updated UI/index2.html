@@ -1,5 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="zxx">
+    <script src="https://unpkg.com/html5-qrcode@2.0.11/dist/html5-qrcode.min.js"></script>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -113,107 +114,8 @@
                 </div>
             </div>
         </div>
-        <!-- slider Area End-->
-        <!-- ? New Product Start -->
-        <section class="new-product-area section-padding30">
-            <div class="container">
-                <!-- Section tittle -->
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="section-tittle mb-3">
-                            <h2>New Arrivals</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                        
-                        <div class="carousel-inner">
-                          <div class="carousel-item active">
-                            <img class="d-block w-100" src="assets\img\vouchers\adidas20.JPG" alt="First slide" style="height: 173px;">
-                          </div>
-                          <div class="carousel-item">
-                            <img class="d-block w-100" src="assets\img\vouchers\fiveguys10.JPG" alt="Second slide" style="height: 173px;">
-                          </div>
-                          <div class="carousel-item">
-                            <img class="d-block w-100" src="assets\img\vouchers\shakeshack5.JPG" alt="Third slide" style="height: 173px;">
-                          </div>
-                        </div>
-                      </div>
-                   
-                </div>
-            </div>
-        </section>
-        <!--  New Product End -->
-       
-        <!--? Popular Items Start -->
-        <div class="popular-items section-padding30">
-            <div class="container">
-                <!-- Section tittle -->
-                <div class="row justify-content-center">
-                    <div class="col-xl-7 col-lg-8 col-md-10">
-                        <div class="section-tittle mb-70 text-center">
-                            <h2>Popular Items</h2>
-                            <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets\img\vouchers\adidas50.JPG" alt="">
-                                <div class="popular-caption pt-3">
-                                    <h3><a href="product_details.html">Adidas $10 Voucher</a></h3>
-                                    <span class="pb-2">$ 8</span>
-                                    <button class ="addtocart_btn" id="voucherID">
-                                        <span class="flaticon-shopping-cart"> Add to cart</span>
-                                        <!-- ADD VOUCHER TO DB HERE!!!! -->
-                                    </button>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets\img\vouchers\fiveguys20.JPG" alt="">
-                            </div>
-                            <div class="popular-caption pt-3">
-                                <h3><a href="product_details.html">Five Guys $20 voucher</a></h3>
-                                <span class="pb-2">$ 16</span>
-                                <button class ="addtocart_btn" id="voucherID">
-                                    <span class="flaticon-shopping-cart"> Add to cart</span>
-                                    <!-- ADD VOUCHER TO DB HERE!!!! -->
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets\img\vouchers\shakeshack10.JPG" alt="">
-                            </div>
-                            <div class="popular-caption pt-3">
-                                <h3><a href="product_details.html">Shake Shack $10 voucher</a></h3>
-                                <span class="pb-2">$ 8</span>
-                                <button class ="addtocart_btn" id="voucherID">
-                                    <span class="flaticon-shopping-cart"> Add to cart</span>
-                                    <!-- ADD VOUCHER TO DB HERE!!!! -->
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!-- Button -->
-                    <div class="row justify-content-center">
-                        <div class="room-btn pb-5">
-                            <a href="shop.html" class="btn view-btn1">View More Vouchers</a>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
+        <div id="qr-reader" style="width:500px"></div>
+        <div id="qr-reader-results"></div>
         <!-- Popular Items End -->
         <!--? Shop Method Start-->
         <div class="shop-method-area pb-5">
@@ -267,6 +169,35 @@
     
 
     <!-- JS here -->
+    <script>
+        var resultContainer = document.getElementById('qr-reader-results');
+        var lastResult, countResults = 0;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            if (decodedText !== lastResult) {
+                ++countResults;
+                lastResult = decodedText;
+                // Handle on success condition with the decoded message.
+                console.log(`Scan result ${decodedText}`, decodedResult);
+            }
+        }
+        Html5Qrcode.getCameras().then(devices => {
+        /**
+         * devices would be an array of objects of type:
+         * { id: "id", label: "label" }
+         */
+        if (devices && devices.length) {
+            var cameraId = devices[0].id;
+            // .. use this to start scanning.
+        }
+        }).catch(err => {
+        // handle err
+        });
+
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
 
     <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
     <!-- Jquery, Popper, Bootstrap -->
@@ -300,6 +231,8 @@
     <!-- Jquery Plugins, main Jquery -->	
     <script src="./assets/js/plugins.js"></script>
     <script src="./assets/js/main.js"></script>
+
+    
     
 </body>
 </html>
