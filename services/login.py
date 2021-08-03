@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
+from flask import url_for
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
@@ -64,17 +65,18 @@ def path_to_filename(filename):
     return render_template(f"{filename}.html")
 
 
-@app.route("/login", methods=['POST'])
+@app.route("/loginc", methods=['POST'])
 def loginCustomer():
     serviceName = 'loginCustomer'
     data = request.get_json()
     loginid = data['userid']
     loginpassword = data['password']
-    category = loginid[:5]
+    category = loginid[:4]
     user = Account.query.filter_by(userid = loginid).first()
     session['category'] = category
     if (user and user.password == loginpassword):
-        return redirect("/index")
+        return redirect("index", code=302)
+        # return redirect(url_for('index'))
     else:
         return jsonify("Login Failed"), 500 
 
@@ -95,4 +97,5 @@ def custdetails():
 
         
 if __name__ == '__main__':
+    app.secret_key="asd"
     app.run(host = '0.0.0.0',port=5010, debug=True)
