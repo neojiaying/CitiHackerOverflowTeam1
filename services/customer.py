@@ -1,4 +1,3 @@
-import pika
 import uuid
 import json
 import sys
@@ -150,7 +149,7 @@ def buyvoucher():
     if user:
         user.loyaltypoints = user.loyaltypoints + points
         db.session.commit
-    return jsonify({"message": "Successful Purchase"}), 201
+    return jsonify({"message": "Successful Purchase"}), 200
 
 @app.route("/generatevoucher", methods=['POST'])
 @cross_origin()

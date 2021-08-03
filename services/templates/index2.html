@@ -69,9 +69,10 @@
         <button id = "qrbutton" onclick=startqr()>Start QR</button>
         <div id="qr-reader" style="width:500px"></div>
         <div id="qr-reader-results"></div>
+        <button id = "redeembutton" onclick=redeemQR()>Redeem Voucher</button>
         <!-- QR Reader End-->
         <div>
-            <div id = "voucherid"></div><div id = "voucheramt"></div>
+            <div id = "userid"></div><div id = "voucherid"></div><div id = "vouchername"></div><div id = "voucheramt"></div><div id = "status"></div>
         </div>
     </main>
     <footer>
@@ -104,13 +105,15 @@
     <script>
         var resultContainer = document.getElementById('qr-reader-results');
         var lastResult, countResults = 0;
+        var scannedid = '';
         var html5QrCode = new Html5Qrcode(
         "qr-reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ] });
         var qrCodeSuccessCallback = (decodedText, decodedResult) => {
             /* handle success */
             console.log(`Scan result ${decodedText}`, decodedResult);
             var request = new XMLHttpRequest();
-            var data = {purchaseid: decodedText}
+            var data = {purchaseid: decodedText};
+            scannedid = decodedText;
             request.open("POST", "http://127.0.0.1:5030/voucherdetails", true);
             request.setRequestHeader("Content-type", "application/json");
             request.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -121,9 +124,15 @@
                     console.log(returnText)
                     dataObj = JSON.parse(returnText);
                     voucherid = dataObj['voucherid']
+                    userid = dataObj['userid']
+                    vouchername = dataObj['vouchername']
                     voucheramt = dataObj['voucheramt']
-                    document.getElementById('voucherid').innerText = voucherid
-                    document.getElementById('voucheramt').innerText = voucheramt
+                    status = dataObj['status']
+                    document.getElementById('voucherid').innerText = 'Voucher id = '+voucherid
+                    document.getElementById('voucheramt').innerText = 'Voucher amount = '+voucheramt
+                    document.getElementById('userid').innerText = 'User id = '+userid
+                    document.getElementById('vouchername').innerText = 'Voucher amount = '+vouchername
+                    document.getElementById('status').innerText = 'Status = '+status
                     html5QrCode.stop().then((ignore) => {
                     // QR Code scanning is stopped.
                     document.getElementById('qr-reader').innerHTML = '';
@@ -143,6 +152,31 @@
         function startqr(){
             html5QrCode.start({ facingMode: "user" }, config, qrCodeSuccessCallback);
         }
+        function redeemQR(){
+            if (scannedid==''){
+                return
+            };
+            var request = new XMLHttpRequest();
+            var data = {purchaseid: scannedid}
+            request.open("POST", "http://127.0.0.1:5030/redeemvoucher", true);
+            request.setRequestHeader("Content-type", "application/json");
+            request.setRequestHeader("Access-Control-Allow-Origin", "*");
+            request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+            request.onreadystatechange = function() {
+                if(this.readyState == 4 && this.status == 200) {
+                    returnText = this.responseText;
+                    console.log(returnText);
+                    dataObj = JSON.parse(returnText);
+                    status = dataObj['message'];
+                    document.getElementById('status').innerText = 'Status = '+status;
+                    scannedid='';
+                }else{
+                    // console.log(this.responseText)
+                    //Prompt Error Message
+                }
+            };
+            request.send(JSON.stringify(data));
+        };
     </script>
 
     <script src="./static/js/vendor/modernizr-3.5.0.min.js"></script>

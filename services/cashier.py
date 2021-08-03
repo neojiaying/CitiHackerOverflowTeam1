@@ -1,4 +1,3 @@
-import pika
 import uuid
 import json
 import sys
@@ -110,33 +109,31 @@ def eprint(*args, **kwargs):
 
 
 ###########################################################################
-@app.route("/scanvoucher", methods=['GET'])
-def scanvoucher():
-    serviceName = 'scanvoucher'
+@app.route("/redeemvoucher", methods=['POST'])
+def redeemvoucher():
     data = request.get_json()
     purchaseid = data['purchaseid']
     purchase = Purchase.query.filter_by(purchaseid=purchaseid).first()
     if purchase and (datetime.datetime.now()<purchase.expirydate):
         purchase.status = "Redeemed"
         db.session.commit()
-        return jsonify({'message':'Voucher Redeemed'}), 201
+        return jsonify({'message':'Voucher Redeemed'}), 200
     elif(datetime.datetime.now()>purchase.expirydate):
         purchase.status = "Expired"
         db.session.commit()
-        return jsonify({'message':'Voucher Expired'}), 201
+        return jsonify({'message':'Voucher Expired'}), 200
     else:
         return jsonify({'message':'Voucher Not Found'}), 500
 
 @app.route("/voucherdetails", methods=['POST'])
 def voucherdetails():
-    serviceName = 'voucherDetails'
     data = request.get_json()
     purchaseid = data['purchaseid']
     purchase = Purchase.query.filter_by(purchaseid = purchaseid).first()
     if purchase:
         voucher = Voucher.query.filter_by(voucherid = purchase.voucherid).first()
         info = {"voucherid":voucher.voucherid, "purchaseid": purchaseid, "userid":purchase.userid, 
-                "voucheramt":voucher.voucheramt, "vouchername":voucher.vouchername}
+                "voucheramt":voucher.voucheramt, "vouchername":voucher.vouchername, "status": purchase.status}
         return jsonify(info), 200
     else:
         return jsonify("Login Failed"), 500 
