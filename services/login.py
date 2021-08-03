@@ -75,8 +75,7 @@ def loginCustomer():
     user = Account.query.filter_by(userid = loginid).first()
     session['category'] = category
     if (user and user.password == loginpassword):
-        return redirect("index", code=302)
-        # return redirect(url_for('index'))
+        return redirect(url_for('index'))
     else:
         return jsonify("Login Failed"), 500 
 
