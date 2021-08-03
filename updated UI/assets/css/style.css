@@ -2935,7 +2935,7 @@ input:focus {
     display: block;
     color: #1b1b1b;
     text-transform: capitalize;
-    font-size: 16px;
+    font-size: 12px;
 }
 .popular-items .nav-tabs .nav-item.show .nav-link,
 .popular-items .nav-tabs .nav-link.active {
