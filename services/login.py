@@ -53,6 +53,52 @@ def eprint(*args, **kwargs):
 
 
 ###########################################################################
+@app.route("/about")
+def about():
+    return render_template("about.html")
+@app.route("/blog")
+def blog():
+    return render_template("blog.html")
+@app.route("/cart")
+def cart():
+    return render_template("cart.html")
+@app.route("/checkout")
+def checkout():
+    return render_template("checkout.html")
+@app.route("/confirmation")
+def confirmation():
+    return render_template("confirmation.html")
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+@app.route("/elements")
+def elements():
+    return render_template("elements.html")
+@app.route("/index")
+def index():
+    return render_template("index.html")
+@app.route("/index2")
+def index2():
+    return render_template("index2.html")
+@app.route("/login")
+def login():
+    return render_template("login.html")
+@app.route("/main")
+def main():
+    return render_template("main.html")
+@app.route("/product_details")
+def product_details():
+    return render_template("product_details.html")
+@app.route("/profile")
+def profile():
+    return render_template("profile.html")
+@app.route("/shop")
+def shop():
+    return render_template("shop.html")
+@app.route("/viewvoucher")
+def viewvoucher():
+    return render_template("vouchers.html")
+
 @app.route("/index")
 def index():
     category = session['category']

@@ -117,10 +117,6 @@ def eprint(*args, **kwargs):
 
 
 ###########################################################################
-@app.route("/viewvoucher")
-def viewvoucher():
-    return render_template("vouchers.html")
-
 @app.route("/buyvoucher", methods=['POST'])
 def buyvoucher():
     serviceName = 'buyvoucher'
