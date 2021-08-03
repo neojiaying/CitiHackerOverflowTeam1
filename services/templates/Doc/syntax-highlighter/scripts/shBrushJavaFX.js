@@ -33,7 +33,7 @@
 						+ 'lazy mixin mod nativearray new not null on or override package postinit '
 						+ 'protected public public-init public-read replace return reverse sizeof '
 						+ 'step super then this throw true try tween typeof var where while with '
-						+ 'attribute let private readonly static trigger'
+						+ 'attribute let private readonly ../static trigger'
 						;
 
 		this.regexList = [

@@ -4292,7 +4292,7 @@ readers do not read off random characters that represent icons */
   height: auto;
   margin: 0;
   overflow: visible;
-  position: static;
+  position: ../static;
   width: auto; }
 @font-face {
   font-family: 'Font Awesome 5 Brands';

@@ -26,7 +26,7 @@
 
 		var keywords =	'as assert break case catch class continue def default do else extends finally ' +
 						'if in implements import instanceof interface new package property return switch ' +
-						'throw throws try while public protected private static';
+						'throw throws try while public protected private ../static';
 		var types    =  'void boolean byte char short int long float double';
 		var constants = 'null';
 		var methods   = 'allProperties count get size '+

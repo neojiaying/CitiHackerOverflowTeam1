@@ -38,7 +38,7 @@
 						'open option order out output partial password precision prepare primary ' +
 						'prior privileges procedure public read real references relative repeatable ' +
 						'restrict return returns revoke rollback rollup rows rule schema scroll ' +
-						'second section select sequence serializable set size smallint static ' +
+						'second section select sequence serializable set size smallint ../static ' +
 						'statistics table temp temporary then time timestamp to top transaction ' +
 						'translation trigger true truncate uncommitted union unique update values ' +
 						'varchar varying view when where with work';

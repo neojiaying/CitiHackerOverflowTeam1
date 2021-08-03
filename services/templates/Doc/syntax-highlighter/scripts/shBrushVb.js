@@ -32,7 +32,7 @@
 						'NotInheritable NotOverridable Object On Option Optional Or OrElse ' +
 						'Overloads Overridable Overrides ParamArray Preserve Private Property ' +
 						'Protected Public RaiseEvent ReadOnly ReDim REM RemoveHandler Resume ' +
-						'Return Select Set Shadows Shared Short Single Static Step Stop String ' +
+						'Return Select Set Shadows Shared Short Single ../static Step Stop String ' +
 						'Structure Sub SyncLock Then Throw To True Try TypeOf Unicode Until ' +
 						'Variant When While With WithEvents WriteOnly Xor';
 
