@@ -2849,7 +2849,6 @@ input:focus {
 }
 .popular-items .single-popular-items .popular-img {
     overflow: hidden;
-    border-bottom: 3px solid #ff2020;
     margin-bottom: 19px;
     position: relative;
 }
@@ -6184,6 +6183,19 @@ del {
     background-color: #fff;
     color: #ff2020;
 }
+
+.addtocart_btn {
+    display: inline-block;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid #fd2530;
+    font-size: 6px;
+    color: #fd2530;
+    width: 53%;
+
+}
+
+
 .btn_3 {
     display: inline-block;
     padding: 18px 36px;
