@@ -5,6 +5,7 @@ import sys
 import uuid
 import requests
 import datetime
+from dateutil.relativedelta import relativedelta
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -131,7 +132,7 @@ def buyvoucher():
         voucher = Voucher.query(voucherid = v).first()
         points = voucher.voucheramt * 10
         purchaseid = uuid.uuid4().hex[:6].upper()
-        purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), points)
+        purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), datetime.datetime.now()+relativedelta(years=1), points, "Redeemable")
         while True:
             try:
                 db.session.add(purchase)

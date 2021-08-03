@@ -114,7 +114,12 @@ def eprint(*args, **kwargs):
 def scanvoucher():
     serviceName = 'scanvoucher'
     data = request.get_json()
-    voucherid = data['voucherid']
+    purchaseid = data['purchaseid']
+    purchase = Purchase.query(purchaseid=purchaseid).first()
+    if purchase:
+        purchase.status = "Redeemed"
+        db.session.commit()
+
 
 def updateDB():
     return
