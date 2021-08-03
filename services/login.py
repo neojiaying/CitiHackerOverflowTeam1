@@ -33,7 +33,7 @@ class Account(db.Model):
             - json(self)
     """
     __tablename__ = 'account'
-    userid = db.Column(db.String(64), nullable=False)
+    userid = db.Column(db.String(64), primary_key=True)
     password = db.Column(db.String(64), nullable=False)
     loyaltypoints = db.Column(db.Float(precision=2), nullable=False)
 

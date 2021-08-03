@@ -37,7 +37,7 @@ class Account(db.Model):
             - json(self)
     """
     __tablename__ = 'account'
-    userid = db.Column(db.String(64), nullable=False)
+    userid = db.Column(db.String(64), primary_key=True)
     password = db.Column(db.String(64), nullable=False)
     loyaltypoints = db.Column(db.Float(precision=2), nullable=False)
     walletamt = db.Column(db.Float(precision=2), nullable=False)
@@ -58,7 +58,7 @@ class Voucher(db.Model):
             - json(self)
     """
     __tablename__ = 'vouchers'
-    voucherid = db.Column(db.Integer(11), Primary_key=True, autoincrement = True)
+    voucherid = db.Column(db.Integer, primary_key=True, autoincrement = True)
     vouchername = db.Column(db.String(64), nullable=False)
     vouchercost = db.Column(db.Float(precision=2), nullable=False)
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
@@ -82,11 +82,11 @@ class Purchase(db.Model):
             - json(self)
     """
     __tablename__ = 'purchase'
-    purchaseid = db.Column(db.Integer(11), Primary_key=True)
+    purchaseid = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.String(64), nullable=False)
-    voucherid = db.Column(db.Integer(11), nullable=False)
-    purchasedatetime = db.Column(db.Datetime, nullable=False)
-    expirydate = db.Column(db.Datetime, nullable=False)
+    voucherid = db.Column(db.Integer, nullable=False)
+    purchasedatetime = db.Column(db.DateTime, nullable=False)
+    expirydate = db.Column(db.Date, nullable=False)
     points = db.Column(db.Float(precision=2), nullable=False)
     status = db.Column(db.String(64), nullable=False)
 
@@ -141,6 +141,11 @@ def buyvoucher():
             except:
                 purchaseid = uuid.uuid4().hex[:6].upper()
                 purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), points)
+    #update loyalty points
+    user = Account.query(userid = userid).first()
+    if user:
+        user.loyaltypoints = user.loyaltypoints + points
+        db.session.commit
     return jsonify({"message": "Successful Purchase"}), 201
 
 @app.route("/generatevoucher", methods=['POST'])
@@ -156,7 +161,8 @@ def generate():
         return 500
 
 def makepayment(credit, cost):
-    return
+    
+    return True
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0',port=5020, debug=True)

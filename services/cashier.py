@@ -2,6 +2,7 @@ import pika
 import uuid
 import json
 import sys
+import datetime
 import requests
 from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -34,7 +35,7 @@ class Account(db.Model):
             - json(self)
     """
     __tablename__ = 'account'
-    userid = db.Column(db.String(64), nullable=False)
+    userid = db.Column(db.String(64), primary_key=True)
     password = db.Column(db.String(64), nullable=False)
     loyaltypoints = db.Column(db.Float(precision=2), nullable=False)
     walletamt = db.Column(db.Float(precision=2), nullable=False)
@@ -55,7 +56,7 @@ class Voucher(db.Model):
             - json(self)
     """
     __tablename__ = 'vouchers'
-    voucherid = db.Column(db.Integer(11), Primary_key=True, autoincrement = True)
+    voucherid = db.Column(db.Integer, primary_key=True, autoincrement = True)
     vouchername = db.Column(db.String(64), nullable=False)
     vouchercost = db.Column(db.Float(precision=2), nullable=False)
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
@@ -79,11 +80,11 @@ class Purchase(db.Model):
             - json(self)
     """
     __tablename__ = 'purchase'
-    purchaseid = db.Column(db.Integer(11), Primary_key=True)
+    purchaseid = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.String(64), nullable=False)
-    voucherid = db.Column(db.Integer(11), nullable=False)
-    purchasedatetime = db.Column(db.Datetime, nullable=False)
-    expirydate = db.Column(db.Datetime, nullable=False)
+    voucherid = db.Column(db.Integer, nullable=False)
+    purchasedatetime = db.Column(db.DateTime, nullable=False)
+    expirydate = db.Column(db.Date, nullable=False)
     points = db.Column(db.Float(precision=2), nullable=False)
     status = db.Column(db.String(64), nullable=False)
 
@@ -116,9 +117,16 @@ def scanvoucher():
     data = request.get_json()
     purchaseid = data['purchaseid']
     purchase = Purchase.query(purchaseid=purchaseid).first()
-    if purchase:
+    if purchase and (datetime.datetime.now()<purchase.expirydate):
         purchase.status = "Redeemed"
         db.session.commit()
+        return jsonify({'message':'Voucher Redeemed'}), 201
+    elif(datetime.datetime.now()>purchase.expirydate):
+        purchase.status = "Expired"
+        db.session.commit()
+        return jsonify({'message':'Voucher Expired'}), 201
+    else:
+        return jsonify({'message':'Voucher Not Found'}), 500
 
 
 def updateDB():

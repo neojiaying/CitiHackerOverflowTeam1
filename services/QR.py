@@ -45,6 +45,7 @@ def scanQR():
     b=webbrowser.open(str(a))
     cap.release()
     cv.destroyAllWindows()
+    return a
 
 # text = 'test'
 # image2 = generateQR(text)
