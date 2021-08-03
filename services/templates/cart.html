@@ -78,149 +78,90 @@
               </div>
           </div>
       </div>
-      <!--================Cart Area =================-->
-      <section class="cart_area section_padding">
-        <div class="container">
-          <div class="cart_inner">
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Product</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="media">
-                        <div class="d-flex">
-                          <img src="assets/img/gallery/card1.png" alt="" />
+      <div class="container mt-2 p-3 rounded cart">
+        <div class="row no-gutters">
+            <!-- <div class="col-md-8">
+                <div class="product-details mr-2">
+                    <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+                        <div class="d-flex flex-row">
+                            <div class="ml-2"><span class="font-weight-bold d-block">Shake Shack $10</span></div>
                         </div>
-                        <div class="media-body">
-                          <p>Minimalistic shop for multipurpose use</p>
+                        <div class="d-flex flex-row align-items-center"><span class="d-block">1</span><span class="d-block ml-5 font-weight-bold">$8</span><i class="fa fa-trash-o ml-3 text-black-50"></i></div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+                        <div class="d-flex flex-row">
+                            <div class="ml-2"><span class="font-weight-bold d-block">Adidas $100</span></div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <h5>$360.00</h5>
-                    </td>
-                    <td>
-                      <div class="product_count">
-                        <span class="input-number-decrement"> <i class="ti-minus"></i></span>
-                        <input class="input-number" type="text" value="1" min="0" max="10">
-                        <span class="input-number-increment"> <i class="ti-plus"></i></span>
-                      </div>
-                    </td>
-                    <td>
-                      <h5>$720.00</h5>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="media">
-                        <div class="d-flex">
-                          <img src="assets/img/gallery/card2.png" alt="" />
+                        <div class="d-flex flex-row align-items-center"><span class="d-block">1</span><span class="d-block ml-5 font-weight-bold">$80</span><i class="fa fa-trash-o ml-3 text-black-50"></i></div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+                        <div class="d-flex flex-row">
+                            <div class="ml-2"><span class="font-weight-bold d-block">Five Guys $20</span></div>
                         </div>
-                        <div class="media-body">
-                          <p>Minimalistic shop for multipurpose use</p>
+                        <div class="d-flex flex-row align-items-center"><span class="d-block">1</span><span class="d-block ml-5 font-weight-bold">$16</span><i class="fa fa-trash-o ml-3 text-black-50"></i></div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded">
+                        <div class="d-flex flex-row">
+                            <div class="ml-2"><span class="font-weight-bold d-block">Adidas $50</span></div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <h5>$360.00</h5>
-                    </td>
-                    <td>
-                      <div class="product_count">
-                          <span class="input-number-decrement"> <i class="ti-minus"></i></span>
-                          <input class="input-number" type="text" value="1" min="0" max="10">
-                          <span class="input-number-increment"> <i class="ti-plus"></i></span>
-                      </div>
-                    </td>
-                    <td>
-                      <h5>$720.00</h5>
-                    </td>
-                  </tr>
-                  <tr class="bottom_button">
-                    <td>
-                      <a class="btn_1" href="#">Update Cart</a>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <div class="cupon_text float-right">
-                        <a class="btn_1" href="#">Close Coupon</a>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <h5>Subtotal</h5>
-                    </td>
-                    <td>
-                      <h5>$2160.00</h5>
-                    </td>
-                  </tr>
-                  <tr class="shipping_area">
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <h5>Shipping</h5>
-                    </td>
-                    <td>
-                      <div class="shipping_box">
-                        <ul class="list">
-                          <li>
-                            Flat Rate: $5.00
-                            <input type="radio" aria-label="Radio button for following text input">
-                          </li>
-                          <li>
-                            Free Shipping
-                            <input type="radio" aria-label="Radio button for following text input">
-                          </li>
-                          <li>
-                            Flat Rate: $10.00
-                            <input type="radio" aria-label="Radio button for following text input">
-                          </li>
-                          <li class="active">
-                            Local Delivery: $2.00
-                            <input type="radio" aria-label="Radio button for following text input">
-                          </li>
-                        </ul>
-                        <h6>
-                          Calculate Shipping
-                          <i class="fa fa-caret-down" aria-hidden="true"></i>
-                        </h6>
-                        <select class="shipping_select">
-                          <option value="1">Bangladesh</option>
-                          <option value="2">India</option>
-                          <option value="4">Pakistan</option>
-                        </select>
-                        <select class="shipping_select section_bg">
-                          <option value="1">Select a State</option>
-                          <option value="2">Select a State</option>
-                          <option value="4">Select a State</option>
-                        </select>
-                        <input class="post_code" type="text" placeholder="Postcode/Zipcode" />
-                        <a class="btn_1" href="#">Update Details</a>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="checkout_btn_inner float-right">
-                <a class="btn_1" href="#">Continue Shopping</a>
-                <a class="btn_1 checkout_btn_1" href="#">Proceed to checkout</a>
-              </div>
+                        <div class="d-flex flex-row align-items-center"><span class="d-block">1</span><span class="d-block ml-5 font-weight-bold">$40</span><i class="fa fa-trash-o ml-3 text-black-50"></i></div>
+                    </div>
+                </div>
+            </div> -->
+            <table style="width: 100%">
+              <th style="width:55%">Voucher Name</th>
+              <th style="width:33%">Quantity</th>
+              <th style="width:20%">Price</th>
+              <tr>
+                <td style="padding-bottom: 40px; padding-top: 10px;"><span>Shake Shack $10</span></td>
+                <td style="padding-bottom: 40px; padding-top: 10px;"><span> 1</span></td>
+                <td style="padding-bottom: 40px; padding-top: 10px;"><span >$8</span></td>
+              </tr>
+
+              <tr>
+                <td style="padding-bottom: 40px;"><span>Adidas $100</span></td>
+                <td style="padding-bottom: 40px;"><span> 1</span></td>
+                <td style="padding-bottom: 40px;"><span >$80</span></td>
+              </tr>
+
+              <tr>
+                <td  style="padding-bottom: 40px;"><span>Five Guys $20</span></td>
+                <td style="padding-bottom: 40px;"><span> 1</span></td>
+                <td style="padding-bottom: 40px;"><span >$16</span></td>
+              </tr>
+
+              <tr>
+                <td><span>Adidas $50</span></td>
+                <td><span> 1</span></td>
+                <td><span >$40</span></td>
+              </tr>
+              
+            </table>
+
+            <div class="col-md-4 pt-5">
+                <div class="payment-info">
+                    <div class="d-flex justify-content-between align-items-center"><span>Card details</span></div>
+                    <span class="type d-block mt-3 mb-1">Card type</span><label class="radio"> <input type="radio" name="card" value="payment" checked>
+                      <span><img width="50" src="https://img.icons8.com/color/48/000000/mastercard.png" /></span> </label>
+                    <label class="radio"> <input type="radio" name="card" value="payment"> <span><img width="50" src="https://img.icons8.com/officel/48/000000/visa.png" /></span> </label>
+                    <div class = "pb-3"><label class="credit-card-label">Name on card</label><input type="text" class="form-control credit-inputs" placeholder="Name"></div>
+                    <div  class = "pb-3"><label class="credit-card-label">Card number</label><input type="text" class="form-control credit-inputs" placeholder="0000 0000 0000 0000"></div>
+                    <div class="row pb-3">
+                        <div class="col-md-6 pb-3"><label class="credit-card-label">Date</label><input type="text" class="form-control credit-inputs" placeholder="12/24"></div>
+                        <div class="col-md-6"><label class="credit-card-label">CVV</label><input type="text" class="form-control credit-inputs" placeholder="342"></div>
+                    </div>
+                    <hr class="line">
+                    <div class="d-flex justify-content-between information"><span>Subtotal</span><span>$xx</span></div>
+                    <div class="d-flex justify-content-between information"><span>Taxes</span><span>$xx</span></div>
+                    <div class="d-flex justify-content-between information"><span>Total(Incl. taxes)</span><span>$xx</span></div><button class="btn btn-primary btn-block d-flex justify-content-center mt-3" type="button"><span>Checkout<i class="fa fa-long-arrow-right ml-1"></i></span></button>
+                </div>
             </div>
-          </div>
-      </section>
-      <!--================End Cart Area =================-->
-  </main>>
+        </div>
+    </div>
+  </main>
   <footer>
     <!-- Footer Start-->
     <hr>
