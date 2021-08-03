@@ -79,6 +79,7 @@
             </div>
         </div>
         <!-- Hero Area End-->
+        <img id='qrimage' src=''>
         <!--================login_part Area =================-->
         <section class="login_part section_padding ">
             <div class="container pb-5">
@@ -130,6 +131,25 @@
     <!-- Footer End-->
     
     <!-- JS here -->
+    <script>
+        var request = new XMLHttpRequest();
+        var data = {userid: "cust123", voucherid: 2500}
+        request.open("POST", "http://127.0.0.1:5020/generatevoucher/", true);
+        request.setRequestHeader("Content-type", "application/json");
+        request.setRequestHeader("Access-Control-Allow-Origin", "*");
+        request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+        request.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                returnText = this.responseText;
+                console.log(returnText)
+                document.getElementById('qrimage').src = "data:image/png;base64,"+returnText
+            }else{
+                // console.log(this.responseText)
+                //Prompt Error Message
+            }
+        };
+        request.send(JSON.stringify(data));
+    </script>
 
     <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
 
