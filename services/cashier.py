@@ -34,19 +34,18 @@ class Account(db.Model):
             - json(self)
     """
     __tablename__ = 'account'
-    userid = db.Column(db.String(64), primary_key = True)
+    userid = db.Column(db.String(64), nullable=False)
     password = db.Column(db.String(64), nullable=False)
     loyaltypoints = db.Column(db.Float(precision=2), nullable=False)
     walletamt = db.Column(db.Float(precision=2), nullable=False)
 
-    def __init__(self, userid, password, loyaltypoints, walletamt): #Initialise the objects
+    def __init__(self, userid, password, loyaltypoints): #Initialise the objects
         self.userid = userid
         self.password = password
         self.loyaltypoints = loyaltypoints
-        self.walletamt = walletamt
 
     def json(self):
-        return {"userid": self.userid, "password": self.password, "loyaltypoints": self.loyaltypoints, "walletamt": self.walletamt}
+        return {"userid": self.userid, "password": self.password, "loyaltypoints": self.loyaltypoints}
 
 class Voucher(db.Model):
     """
@@ -56,23 +55,21 @@ class Voucher(db.Model):
             - json(self)
     """
     __tablename__ = 'vouchers'
-    voucherid = db.Column(db.Integer(11), Primary_key=True)
+    voucherid = db.Column(db.Integer(11), Primary_key=True, autoincrement = True)
     vouchername = db.Column(db.String(64), nullable=False)
     vouchercost = db.Column(db.Float(precision=2), nullable=False)
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
-    expirydate = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(64), nullable=False)
 
-    def __init__(self, voucherid, vouchername, vouchercost, voucheramt, expirydate, status): #Initialise the objects
+
+    def __init__(self, voucherid, vouchername, vouchercost, voucheramt): #Initialise the objects
         self.voucherid = voucherid
         self.vouchername = vouchername
         self.vouchercost = vouchercost
         self.voucheramt = voucheramt
-        self.expirydate = expirydate
-        self.status = status
+
 
     def json(self):
-        return {"voucherid": self.voucherid, "vouchername": self.vouchername, "vouchercost": self.vouchercost, "voucheramt": self.voucheramt, "expirydate": self.expirydate, "status": self.status}
+        return {"voucherid": self.voucherid, "vouchername": self.vouchername, "vouchercost": self.vouchercost, "voucheramt": self.voucheramt}
 
 class Purchase(db.Model):
     """
@@ -86,17 +83,22 @@ class Purchase(db.Model):
     userid = db.Column(db.String(64), nullable=False)
     voucherid = db.Column(db.Integer(11), nullable=False)
     purchasedatetime = db.Column(db.Datetime, nullable=False)
+    expirydate = db.Column(db.Datetime, nullable=False)
     points = db.Column(db.Float(precision=2), nullable=False)
+    status = db.Column(db.String(64), nullable=False)
 
-    def __init__(self, purchaseid, userid, voucherid, purchasedatetime, points): #Initialise the objects
+    def __init__(self, purchaseid, userid, voucherid, purchasedatetime, expirydate, points, status): #Initialise the objects
         self.purchaseid = purchaseid
         self.userid = userid
         self.voucherid = voucherid
         self.purchasedatetime = purchasedatetime
+        self.expirydate = expirydate
         self.points = points
+        self.status = status
 
     def json(self):
-        return {"purchaseid": self.purchaseid, "userid": self.userid, "voucherid": self.voucherid, "purchasedatetime": self.purchasedatetime, "points": self.points}
+        return {"purchaseid": self.purchaseid, "userid": self.userid, "voucherid": self.voucherid, 
+        "purchasedatetime": self.purchasedatetime, "expirydate": self.expirydate, "points": self.points, "status": self.status}
 
 #FOR DEBUGGING - eprint()
 def eprint(*args, **kwargs):
@@ -110,11 +112,9 @@ def eprint(*args, **kwargs):
 
 @app.route("/scanvoucher", methods=['GET'])
 def scanvoucher():
-    # serviceName = 'scanvoucher'
-    # data = request.get_json()
-    # loginid = data['userid']
-    # loginpassword = data['password']
-    scanQR()
+    serviceName = 'scanvoucher'
+    data = request.get_json()
+    voucherid = data['voucherid']
 
 def updateDB():
     return
