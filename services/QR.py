@@ -47,7 +47,7 @@ def scanQR():
     cv.destroyAllWindows()
     return a
 
-# text = 'test'
-# image2 = generateQR(text)
+text = 'test'
+image2 = generateQR(text)
 # decodeQR(image2)
 # scanQR()

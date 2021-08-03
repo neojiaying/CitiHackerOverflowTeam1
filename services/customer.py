@@ -4,11 +4,12 @@ import json
 import sys
 import uuid
 import requests
+import base64
 import datetime
 from dateutil.relativedelta import relativedelta
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, make_response
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from os import environ
 from QR import scanQR, decodeQR, generateQR
 
@@ -19,7 +20,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-CORS(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 ###  This microservice contain User, Holdings, and Correlation class
 """
 List of Functions for User
@@ -111,7 +113,9 @@ def eprint(*args, **kwargs):
 
 
 ###########################################################################
-
+@app.route("/viewvoucher")
+def viewvoucher():
+    return render_template("/updatedUI/vouchers.html")
 
 @app.route("/buyvoucher", methods=['POST'])
 def buyvoucher():
@@ -123,13 +127,13 @@ def buyvoucher():
     #Make Payment
     cost = 0
     for v in voucherid:
-        voucher = Voucher.query(voucherid = v).first()
+        voucher = Voucher.query.filter_by(voucherid = v).first()
         cost += voucher.vouchercost
     if not makepayment(credit, cost):
         return jsonify({"message": "Insufficient Funds"}), 500
     #insert into purchase database
     for v in voucherid:
-        voucher = Voucher.query(voucherid = v).first()
+        voucher = Voucher.query.filter_by(voucherid = v).first()
         points = voucher.voucheramt * 10
         purchaseid = uuid.uuid4().hex[:6].upper()
         purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), datetime.datetime.now()+relativedelta(years=1), points, "Redeemable")
@@ -142,26 +146,28 @@ def buyvoucher():
                 purchaseid = uuid.uuid4().hex[:6].upper()
                 purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), points)
     #update loyalty points
-    user = Account.query(userid = userid).first()
+    user = Account.query.filter_by(userid = userid).first()
     if user:
         user.loyaltypoints = user.loyaltypoints + points
         db.session.commit
     return jsonify({"message": "Successful Purchase"}), 201
 
 @app.route("/generatevoucher", methods=['POST'])
+@cross_origin()
 def generate():
     serviceName = 'redeemvoucher'
     data = request.get_json()
     userid = data['userid']
     voucherid = data['voucherid']
-    purchase = Purchase.query(userid=userid, voucherid=voucherid).first()
+    purchase = Purchase.query.filter_by(userid=userid, voucherid=voucherid).first()
     if purchase:
-        return generateQR(purchase.purchaseid), 201
+        eprint("hi")
+        return make_response(generateQR(purchase.purchaseid).tobytes()), 201
     else:
         return 500
 
 def makepayment(credit, cost):
-    
+
     return True
 
 if __name__ == '__main__':

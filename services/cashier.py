@@ -17,7 +17,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-CORS(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 ###  This microservice contain User, Holdings, and Correlation class
 """
 List of Functions for User
@@ -116,7 +117,7 @@ def scanvoucher():
     serviceName = 'scanvoucher'
     data = request.get_json()
     purchaseid = data['purchaseid']
-    purchase = Purchase.query(purchaseid=purchaseid).first()
+    purchase = Purchase.query.filter_by(purchaseid=purchaseid).first()
     if purchase and (datetime.datetime.now()<purchase.expirydate):
         purchase.status = "Redeemed"
         db.session.commit()
@@ -127,6 +128,20 @@ def scanvoucher():
         return jsonify({'message':'Voucher Expired'}), 201
     else:
         return jsonify({'message':'Voucher Not Found'}), 500
+
+@app.route("/voucherdetails", methods=['POST'])
+def voucherdetails():
+    serviceName = 'voucherDetails'
+    data = request.get_json()
+    purchaseid = data['purchaseid']
+    purchase = Purchase.query.filter_by(purchaseid = purchaseid).first()
+    if purchase:
+        voucher = Voucher.query.filter_by(voucherid = purchase.voucherid).first()
+        info = {"voucherid":voucher.voucherid, "purchaseid": purchaseid, "userid":purchase.userid, 
+                "voucheramt":voucher.voucheramt, "vouchername":voucher.vouchername}
+        return jsonify(info), 201
+    else:
+        return jsonify("Login Failed"), 500 
 
 
 def updateDB():
