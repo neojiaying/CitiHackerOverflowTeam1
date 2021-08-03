@@ -110,7 +110,9 @@ def eprint(*args, **kwargs):
 
 
 ###########################################################################
-
+@app.route("/index2")
+def index2():
+    return render_template("index2.html")
 
 @app.route("/scanvoucher", methods=['GET'])
 def scanvoucher():
@@ -139,7 +141,7 @@ def voucherdetails():
         voucher = Voucher.query.filter_by(voucherid = purchase.voucherid).first()
         info = {"voucherid":voucher.voucherid, "purchaseid": purchaseid, "userid":purchase.userid, 
                 "voucheramt":voucher.voucheramt, "vouchername":voucher.vouchername}
-        return jsonify(info), 201
+        return jsonify(info), 200
     else:
         return jsonify("Login Failed"), 500 
 

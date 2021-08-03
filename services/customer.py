@@ -5,12 +5,17 @@ import sys
 import uuid
 import requests
 import base64
+from PIL import Image
+from io import BytesIO
 import datetime
+import logging
 from dateutil.relativedelta import relativedelta
 from flask import Flask, request, jsonify, render_template, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 from os import environ
+
+from werkzeug.datastructures import Headers
 from QR import scanQR, decodeQR, generateQR
 
 app = Flask(__name__)
@@ -18,10 +23,9 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:S@mbamasala123!@localhost:3306/user'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/citi'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+db = SQLAlchemy(app)
+CORS(app)
 ###  This microservice contain User, Holdings, and Correlation class
 """
 List of Functions for User
@@ -115,7 +119,7 @@ def eprint(*args, **kwargs):
 ###########################################################################
 @app.route("/viewvoucher")
 def viewvoucher():
-    return render_template("/updatedUI/vouchers.html")
+    return render_template("vouchers.html")
 
 @app.route("/buyvoucher", methods=['POST'])
 def buyvoucher():
@@ -162,7 +166,12 @@ def generate():
     purchase = Purchase.query.filter_by(userid=userid, voucherid=voucherid).first()
     if purchase:
         eprint("hi")
-        return make_response(generateQR(purchase.purchaseid).tobytes()), 201
+        img = generateQR(purchase.purchaseid)              
+        buffer = BytesIO()
+        img.save(buffer,format="JPEG")               
+        myimage = buffer.getvalue()
+        eprint(myimage)
+        return (base64.b64encode(myimage)), 200
     else:
         return 500
 
@@ -171,4 +180,4 @@ def makepayment(credit, cost):
     return True
 
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0',port=5020, debug=True)
+    app.run(host = '127.0.0.1',port=5020, debug=True)
