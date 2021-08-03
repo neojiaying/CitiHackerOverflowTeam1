@@ -3,7 +3,7 @@ import uuid
 import json
 import sys
 import requests
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
@@ -36,16 +36,14 @@ class Account(db.Model):
     userid = db.Column(db.String(64), nullable=False)
     password = db.Column(db.String(64), nullable=False)
     loyaltypoints = db.Column(db.Float(precision=2), nullable=False)
-    walletamt = db.Column(db.Float(precision=2), nullable=False)
 
-    def __init__(self, userid, password, loyaltypoints, walletamt): #Initialise the objects
+    def __init__(self, userid, password, loyaltypoints): #Initialise the objects
         self.userid = userid
         self.password = password
         self.loyaltypoints = loyaltypoints
-        self.walletamt = walletamt
 
     def json(self):
-        return {"userid": self.userid, "password": self.password, "loyaltypoints": self.loyaltypoints, "walletamt": self.walletamt}
+        return {"userid": self.userid, "password": self.password, "loyaltypoints": self.loyaltypoints}
 
 #FOR DEBUGGING - eprint()
 def eprint(*args, **kwargs):
@@ -55,7 +53,13 @@ def eprint(*args, **kwargs):
 
 
 ###########################################################################
-
+@app.route("/index")
+def index():
+    category = session['category']
+    if category == 'cust':
+        return render_template("index.html")
+    elif category == 'cash':
+        return render_template("index2.html")
 
 @app.route("/login", methods=['POST'])
 def loginCustomer():
@@ -65,10 +69,12 @@ def loginCustomer():
     loginpassword = data['password']
     category = loginid[:5]
     user = Account.query.filter_by(userid = loginid).first()
+    session['category'] = category
     if (user and user.password == loginpassword):
-        return jsonify("Login Success"), 201
+        return redirect("/index")
     else:
         return jsonify("Login Failed"), 500 
+
 
 @app.route("/details", methods=['POST'])
 def custdetails():
@@ -78,7 +84,7 @@ def custdetails():
     loginpassword = data['password']
     user = Account.query.filter_by(userid = loginid).first()
     if (user and user.password == loginpassword):
-        useraccount = {"points": user.loyaltypoints, "walletAmt": user.walletamt}
+        useraccount = {"userid": loginid, "points": user.loyaltypoints}
         return jsonify(useraccount), 201
     else:
         return jsonify("Login Failed"), 500 
