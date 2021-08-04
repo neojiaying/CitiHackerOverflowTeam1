@@ -77,25 +77,27 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm">
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center pb-5">
                             <!-- HTML -->
-                            <h3>Sales by Country</h3>
+                            <!-- <h3>Sales by Country</h3> -->
                             <div id="chartdiv"></div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="row justify-content-center">
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm">
-                        <div class="row justify-content-center">
-                            <h3>Top Brands</h3>
+                        <div class="row justify-content-center pb-2">
+                            <!-- <h3>Top Brands</h3> -->
                             <div id="chartdiv2"></div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="row justify-content-center">
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm">
                         <div class="row justify-content-center">
-                            <h3>Market Basket Analysis</h3>
+                            <!-- <h3>Market Basket Analysis</h3> -->
                             <div id="chartdiv3"></div>                            
                         </div>
                     </div>
@@ -246,6 +248,13 @@
     }];
     
     chart.innerRadius = am4core.percent(40)
+
+    var title = chart.titles.create();
+    title.text = "Sales by Country";
+    title.fontSize = 25;
+    title.fontFamily = 'Josefin Sans, sans-serif';
+    title.marginBottom = 150;
+   
     
     var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.renderer.grid.template.location = 0;
@@ -335,6 +344,12 @@
     label.verticalCenter = "middle";
     label.dx = -15;
     label.fontSize = 50;
+
+    var title = chart.titles.create();
+    title.text = "Top Brands";
+    title.fontSize = 25;
+    title.fontFamily = 'Josefin Sans, sans-serif';
+    title.marginBottom = 150;
     
     var playButton = chart.plotContainer.createChild(am4core.PlayButton);
     playButton.x = am4core.percent(97);
@@ -1727,6 +1742,12 @@
     // Themes end
     
     var chart = am4core.create("chartdiv3", am4charts.ChordDiagram);
+
+    var title = chart.titles.create();
+    title.text = "Market Basket Analysis";
+    title.fontSize = 25;
+    title.fontFamily = 'Josefin Sans, sans-serif';
+    title.marginTop = 100;
     
     // colors of main characters
     chart.colors.saturation = 0.45;
