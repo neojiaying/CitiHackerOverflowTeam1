@@ -277,6 +277,7 @@
                         var cart = {};
                         window.sessionStorage.setItem("userid", requestBody['userid']);
                         window.sessionStorage.setItem("cart", JSON.stringify(cart));
+                        window.sessionStorage.setItem("cartQuantity", 0);
                         const response = await fetch(serviceURL, requestParam);
                         console.log(response.status);
  

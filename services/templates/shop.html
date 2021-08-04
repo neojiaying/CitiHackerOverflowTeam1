@@ -50,7 +50,10 @@
                                 <li> <span id='logoutBtn' onclick=logout() >Logout</span></li>
                                 <li> <a href="vouchers"><span id="vouchersBtn">My Vouchers</span></a></li>
                                 <li> <a href="profile"><span id="profileBtn" class="flaticon-user"></span></a></li>
-                                <li><a href="cart"><span id="cartBtn" class="flaticon-shopping-cart"></span></a> </li>
+                                <li><a href="cart">
+                                    <span id="cartBtn" class="flaticon-shopping-cart"></span>
+                                    <span class='badge badge-warning' id='lblCartCount'> 0 </span>
+                                </a> </li>
                             </ul>
                         </div>
                     </div>
@@ -228,6 +231,8 @@
         console.log(userid);
         var cart = JSON.parse(window.sessionStorage.getItem("cart"));
         console.log(cart);
+        var cartQuantity = window.sessionStorage.getItem("cartQuantity");
+        updateCartNumber();
 
         if (userid==''){
             document.getElementById('logoutBtn').style.display = "none";
@@ -282,8 +287,14 @@
             }
             window.sessionStorage.setItem("cart", JSON.stringify(cart));
             console.log(cart)
+            cartQuantity++;
+            updateCartNumber();
         }
         
+        function updateCartNumber(){
+            window.sessionStorage.setItem("cartQuantity", cartQuantity);
+            document.getElementById('lblCartCount').innerText = cartQuantity;
+        }
     </script>
     <!-- All JS Custom Plugins Link Here here -->
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
@@ -318,6 +329,28 @@
     <!-- Jquery Plugins, main Jquery -->	
     <script src="../static/js/plugins.js"></script>
     <script src="../static/js/main.js"></script>
+    <style>
+        .header{background:rgb(0, 178, 255);color:#fff;}
+        #lblCartCount {
+            font-size: 12px;
+            background: #ff6600;
+            color: #fff;
+            padding: 0 5px;
+            vertical-align: top;
+            margin-left: -40%;
+        }
+        .badge {
+        padding-left: 9px;
+        padding-right: 9px;
+        -webkit-border-radius: 9px;
+        -moz-border-radius: 9px;
+        border-radius: 9px;
+        }
     
+        .label-warning[href],
+        .badge-warning[href] {
+        background-color: #c67605;
+        }
+        </style>
 </body>
 </html>
