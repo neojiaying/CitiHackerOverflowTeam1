@@ -201,21 +201,21 @@ def getallvouchers():
     else:
         return 500
 
-@app.route("/getpopularvouchers", methods=['GET'])
-def getpopularvouchers():
-    vouchers = Voucher.query.all()
-    purchase = Purchase.query.select('voucherid',db.func.count('voucherid').label('count'))\
-                    .group_by('voucherid')\
-                    .order_by('count')
-    eprint(purchase)
-    voucherlist = []
-    if vouchers:
-        # eprint(vouchers)
-        for v in vouchers:
-            voucherlist.append(v.json())
-        return jsonify({'vouchers':voucherlist}), 200
-    else:
-        return 500
+# @app.route("/getpopularvouchers", methods=['GET'])
+# def getpopularvouchers():
+#     vouchers = Voucher.query.all()
+#     purchase = Purchase.query.select('voucherid',db.func.count('voucherid').label('count'))\
+#                     .group_by('voucherid')\
+#                     .order_by('count')
+#     eprint(purchase)
+#     voucherlist = []
+#     if vouchers:
+#         # eprint(vouchers)
+#         for v in vouchers:
+#             voucherlist.append(v.json())
+#         return jsonify({'vouchers':voucherlist}), 200
+#     else:
+#         return 500
 
 def makepayment(credit, cost):
 

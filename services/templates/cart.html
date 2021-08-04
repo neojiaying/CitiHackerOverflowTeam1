@@ -228,6 +228,9 @@
                         }
                     );
                 }else{
+                    returnText = this.responseText;
+                    console.log(returnText);
+                    dataObj = JSON.parse(returnText);
                     swal({
                         title:dataObj['message'],
                         icon:"warning"}, 

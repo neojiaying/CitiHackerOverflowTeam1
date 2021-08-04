@@ -155,63 +155,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div id = 'popularvouchers' class="row">
 
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="../static\img\vouchers\adidas50.JPG" alt="">
-                            </div>
-                            <div class="popular-caption pt-3">
-                                <h3>Adidas $50 Voucher</h3>
-                                <span class="pb-2">$ 40</span>
-                                <button class ="addtocart_btn" id="voucherID">
-                                    <span class="flaticon-shopping-cart"> Add to cart</span>
-                                    <!-- ADD VOUCHER TO DB HERE!!!! -->
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="../static\img\vouchers\fiveguys20.JPG" alt="">
-                            </div>
-                            <div class="popular-caption pt-3">
-                                <h3>Five Guys $20 voucher</h3>
-                                <span class="pb-2">$ 16</span>
-                                <button class ="addtocart_btn" id="voucherID">
-                                    <span class="flaticon-shopping-cart"> Add to cart</span>
-                                    <!-- ADD VOUCHER TO DB HERE!!!! -->
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="../static\img\vouchers\shakeshack10.JPG" alt="">
-                            </div>
-                            <div class="popular-caption pt-3">
-                                <h3>Shake Shack $10 voucher</h3>
-                                <span class="pb-2">$ 8</span>
-                                <button class ="addtocart_btn" id="voucherID">
-                                    <span class="flaticon-shopping-cart"> Add to cart</span>
-                                    <!-- ADD VOUCHER TO DB HERE!!!! -->
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Button -->
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="row justify-content-center">
-                            <div class="room-btn pb-5">
-                                <a href="shop" class="btn view-btn1">View More Vouchers</a>
-                            </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                    <div class="row justify-content-center">
+                        <div class="room-btn pb-5">
+                            <a href="shop" class="btn view-btn1">View More Vouchers</a>
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
         <!-- Popular Items End -->
@@ -275,6 +228,8 @@
 
         let userid = window.sessionStorage.getItem("userid");
         console.log(userid);
+        var cart = JSON.parse(window.sessionStorage.getItem("cart"));
+        console.log(cart);
 
         if (userid==''){
             document.getElementById('logoutBtn').style.display = "none";
@@ -285,7 +240,7 @@
             document.getElementById('loginBtn').style.display = "none";
         }
         var request = new XMLHttpRequest();
-        request.open("GET", "http://127.0.0.1:5020/getpopularvouchers", true);
+        request.open("GET", "http://127.0.0.1:5020/getallvouchers", true);
         request.setRequestHeader("Content-Type", "application/json");
         request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         request.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -297,11 +252,21 @@
                 dataObj = JSON.parse(returnText);
                 console.log(dataObj);
                 for(var i in dataObj['vouchers']){
-                    console.log(dataObj['vouchers'][i])
-                    document.getElementById("displayvouchers").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
-                        <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
-                        <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
-                    </div>`
+                    if (i == 2) break;
+                    document.getElementById("popularvouchers").innerHTML += `<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                        <div class="single-popular-items mb-50 text-center">
+                            <div class="popular-img">
+                                <img src="../static/img/vouchers/${dataObj['vouchers'][i]['voucherid']}.JPG" alt="">
+                            </div>
+                            <div class="popular-caption pt-3">
+                                <h3>${dataObj['vouchers'][i]['vouchername']}</h3>
+                                <span class="pb-2">$ ${dataObj['vouchers'][i]['vouchercost']}</span>
+                                <button id = 'addtocart'
+                                    onclick="addToCart('${dataObj['vouchers'][i]['voucherid']}'+'\',\''+'${dataObj['vouchers'][i]['vouchercost']}'+'\',\''+'${dataObj['vouchers'][i]['vouchername']}')"
+                                    class="btn view-btn1 redeem-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>`;
                 }
             }else{
                 // console.log(this.responseText)
@@ -309,6 +274,19 @@
             }
         };
         request.send();
+
+        function addToCart(voucherid, amount, vouchername){
+            if (voucherid in cart){
+                cart[voucherid]['quantity']+=1;
+            }else{
+                cart[voucherid] = {};
+                cart[voucherid]['quantity']=1;
+                cart[voucherid]['amount']=parseInt(amount);
+                cart[voucherid]['vouchername']=vouchername;
+            }
+            window.sessionStorage.setItem("cart", JSON.stringify(cart));
+            console.log(cart)
+        }
     </script>
 
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
