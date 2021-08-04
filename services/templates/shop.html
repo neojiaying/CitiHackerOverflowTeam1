@@ -6,7 +6,6 @@
     <title>GoalDiggers | Vouchers Marketplace</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="manifest" href="site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="../static/img/favicon.ico">
 
     <!-- CSS here -->
@@ -302,17 +301,19 @@
                 dataObj = JSON.parse(returnText);
                 console.log(dataObj);
                 for(var i in dataObj['vouchers']){
-                    console.log(dataObj['vouchers'][i])
+                    // console.log(dataObj['vouchers'][i]);
                     document.getElementById("displayvouchers").innerHTML += `<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
                         <div class="single-popular-items mb-50 text-center">
                         <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]['voucherid']}.jpg">
                         <div class="popular-caption pt-3">
-                                        <h3>${dataObj['vouchers'][i]['vouchername']}</h3>
-                                        <span class="pb-2">$ ${dataObj['vouchers'][i]['vouchercost']}</span>
-                                        <button id = 'addtocart' onclick=addToCart('${dataObj['vouchers'][i]['voucherid']}') class="btn view-btn1 redeem-btn">Add to Cart</button>
+                            <h3>${dataObj['vouchers'][i]['vouchername']}</h3>
+                            <span class="pb-2">$ ${dataObj['vouchers'][i]['vouchercost']}</span>
+                        <button id = 'addtocart'
+                            onclick="addToCart('${dataObj['vouchers'][i]['voucherid']}'+'\',\''+'${dataObj['vouchers'][i]['vouchercost']}'+'\',\''+'${dataObj['vouchers'][i]['vouchername']}')"
+                            class="btn view-btn1 redeem-btn">Add to Cart</button>
                         </div>
                     </div>
-                    </div>`
+                    </div>`;
                 }
             }else{
                 // console.log(this.responseText)
@@ -320,15 +321,18 @@
             }
         };
         request.send();
-
-        function addToCart(voucherid){
+// +'\',\''+'${dataObj['vouchers'][i]['vouchername']}'
+        function addToCart(voucherid, amount, vouchername){
             if (voucherid in cart){
-                cart[voucherid]+=1;
+                cart[voucherid]['quantity']+=1;
             }else{
-                cart[voucherid]=1;
+                cart[voucherid] = {};
+                cart[voucherid]['quantity']=1;
+                cart[voucherid]['amount']=parseInt(amount);
+                cart[voucherid]['vouchername']=vouchername;
             }
             window.sessionStorage.setItem("cart", JSON.stringify(cart));
-            console.log(cart);
+            console.log(cart)
         }
         
     </script>

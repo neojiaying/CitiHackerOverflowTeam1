@@ -45,7 +45,6 @@ class Account(db.Model):
     userid = db.Column(db.String(64), primary_key=True)
     password = db.Column(db.String(64), nullable=False)
     loyaltypoints = db.Column(db.Float(precision=2), nullable=False)
-    walletamt = db.Column(db.Float(precision=2), nullable=False)
 
     def __init__(self, userid, password, loyaltypoints): #Initialise the objects
         self.userid = userid
@@ -88,7 +87,7 @@ class Purchase(db.Model):
             - json(self)
     """
     __tablename__ = 'purchase'
-    purchaseid = db.Column(db.Integer, primary_key=True)
+    purchaseid = db.Column(db.String(6), primary_key=True)
     userid = db.Column(db.String(64), nullable=False)
     voucherid = db.Column(db.String(64), nullable=False)
     purchasedatetime = db.Column(db.DateTime, nullable=False)
@@ -122,34 +121,38 @@ def buyvoucher():
     serviceName = 'buyvoucher'
     data = request.get_json()
     userid = data['userid']
-    voucherid = data['voucherid'] # list of vouchers
+    voucherdetails = data['voucherdetails'] # list of vouchers
     credit = data['credit'] # dictionary of credit card info
+    user = Account.query.filter_by(userid = userid).first()
+    if not user:
+        return jsonify({'message':'Unauthorized user'}), 500
+
     #Make Payment
-    cost = 0
-    for v in voucherid:
-        voucher = Voucher.query.filter_by(voucherid = v).first()
-        cost += voucher.vouchercost
+    cost = data['total']
     if not makepayment(credit, cost):
         return jsonify({"message": "Insufficient Funds"}), 500
+
+    points = 0
     #insert into purchase database
-    for v in voucherid:
-        voucher = Voucher.query.filter_by(voucherid = v).first()
-        points = voucher.voucheramt * 10
-        purchaseid = uuid.uuid4().hex[:6].upper()
-        purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), datetime.datetime.now()+relativedelta(years=1), points, "Redeemable")
-        while True:
-            try:
-                db.session.add(purchase)
-                db.session.commit
-                break
-            except:
-                purchaseid = uuid.uuid4().hex[:6].upper()
-                purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), points)
+    for v in voucherdetails:
+        voucherdetail = voucherdetails[v]
+        for i in range(voucherdetail['quantity']):
+            voucher = Voucher.query.filter_by(voucherid = v).first()
+            points += voucher.voucheramt * 10
+            purchaseid = uuid.uuid4().hex[:6].upper()
+            purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), datetime.datetime.now()+relativedelta(years=1), points, "Redeemable")
+            eprint(purchase)
+            while True:
+                try:
+                    db.session.add(purchase)
+                    db.session.commit()
+                    break
+                except:
+                    purchaseid = uuid.uuid4().hex[:6].upper()
+                    purchase = Purchase(purchaseid, userid, v, datetime.datetime.now(), points, 'Reedemable')
     #update loyalty points
-    user = Account.query.filter_by(userid = userid).first()
-    if user:
-        user.loyaltypoints = user.loyaltypoints + points
-        db.session.commit
+    user.loyaltypoints = user.loyaltypoints + points
+    db.session.commit()
     return jsonify({"message": "Successful Purchase"}), 200
 
 @app.route("/generatevoucher", methods=['POST'])

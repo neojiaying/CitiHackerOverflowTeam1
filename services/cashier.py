@@ -80,7 +80,7 @@ class Purchase(db.Model):
             - json(self)
     """
     __tablename__ = 'purchase'
-    purchaseid = db.Column(db.Integer, primary_key=True)
+    purchaseid = db.Column(db.String(6), primary_key=True)
     userid = db.Column(db.String(64), nullable=False)
     voucherid = db.Column(db.Integer, nullable=False)
     purchasedatetime = db.Column(db.DateTime, nullable=False)
