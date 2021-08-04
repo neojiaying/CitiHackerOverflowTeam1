@@ -1871,7 +1871,7 @@ input:focus::-moz-placeholder {
 }
 @media only screen and (min-width: 1200px) and (max-width: 1600px) {
     .latest-padding {
-        padding-top: 190px;
+        padding-top: 50px;
         padding-bottom: 135px;
     }
 }
