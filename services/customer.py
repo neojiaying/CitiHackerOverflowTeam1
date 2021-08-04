@@ -62,22 +62,22 @@ class Voucher(db.Model):
             - json(self)
     """
     __tablename__ = 'vouchers'
-    voucherid = db.Column(db.String(64), primary_key=True)
+    voucherid = db.Column(db.Integer, primary_key=True, autoincrement = True)
     vouchername = db.Column(db.String(64), nullable=False)
     vouchercost = db.Column(db.Float(precision=2), nullable=False)
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
+    brand = db.Column(db.String(64), nullable=False)
 
-
-    def __init__(self, voucherid, vouchername, vouchercost, voucheramt): #Initialise the objects
+    def __init__(self, voucherid, vouchername, vouchercost, voucheramt, brand): #Initialise the objects
         self.voucherid = voucherid
         self.vouchername = vouchername
         self.vouchercost = vouchercost
         self.voucheramt = voucheramt
+        self.brand = brand
 
-    
 
     def json(self):
-        return {"voucherid": self.voucherid, "vouchername": self.vouchername, "vouchercost": self.vouchercost, "voucheramt": self.voucheramt}
+        return {"voucherid": self.voucherid, "vouchername": self.vouchername, "vouchercost": self.vouchercost, "voucheramt": self.voucheramt, "brand": self.brand}
 
 class Purchase(db.Model):
     """
@@ -201,21 +201,6 @@ def getallvouchers():
     else:
         return 500
 
-# @app.route("/getpopularvouchers", methods=['GET'])
-# def getpopularvouchers():
-#     vouchers = Voucher.query.all()
-#     purchase = Purchase.query.select('voucherid',db.func.count('voucherid').label('count'))\
-#                     .group_by('voucherid')\
-#                     .order_by('count')
-#     eprint(purchase)
-#     voucherlist = []
-#     if vouchers:
-#         # eprint(vouchers)
-#         for v in vouchers:
-#             voucherlist.append(v.json())
-#         return jsonify({'vouchers':voucherlist}), 200
-#     else:
-#         return 500
 
 def makepayment(credit, cost):
 

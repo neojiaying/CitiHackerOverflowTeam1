@@ -60,17 +60,18 @@ class Voucher(db.Model):
     vouchername = db.Column(db.String(64), nullable=False)
     vouchercost = db.Column(db.Float(precision=2), nullable=False)
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
+    brand = db.Column(db.String(64), nullable=False)
 
-
-    def __init__(self, voucherid, vouchername, vouchercost, voucheramt): #Initialise the objects
+    def __init__(self, voucherid, vouchername, vouchercost, voucheramt, brand): #Initialise the objects
         self.voucherid = voucherid
         self.vouchername = vouchername
         self.vouchercost = vouchercost
         self.voucheramt = voucheramt
+        self.brand = brand
 
 
     def json(self):
-        return {"voucherid": self.voucherid, "vouchername": self.vouchername, "vouchercost": self.vouchercost, "voucheramt": self.voucheramt}
+        return {"voucherid": self.voucherid, "vouchername": self.vouchername, "vouchercost": self.vouchercost, "voucheramt": self.voucheramt, "brand": self.brand}
 
 class Purchase(db.Model):
     """
