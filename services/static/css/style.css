@@ -2414,11 +2414,10 @@ input:focus {
 }
 @media (max-width: 575px) {
     .header-area .main-header .menu-wrapper .header-right {
-        position: relative;
-        top: 78px;
-        /* bottom: -50px; */
+        position: absolute;
+        top: 118px;
+        right:0px;
         z-index: 3;
-        /* right: -100px; */
     }
 }
 .header-area .main-header .menu-wrapper .header-right ul {
