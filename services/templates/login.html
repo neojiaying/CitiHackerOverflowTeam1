@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zxx">
+<html class="no-js" lang="zxx">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -113,21 +113,19 @@
                         <div class="login_part_form">
                             <div class="login_part_form_iner">
                                 <h3>Create an Account!<br></h3>
-                                <form class="row contact_form" action="#" method="post" novalidate="novalidate">
                                     <div class="col-md-12 form-group p_star">
-                                        <input type="text" class="form-control" id="name" name="name" value=""
+                                        <input type="text" class="form-control" id="useridr" name="useridr" value=""
                                             placeholder="Username">
                                     </div>
                                     <div class="col-md-12 form-group p_star">
-                                        <input type="password" class="form-control" id="password" name="password" value=""
+                                        <input type="password" class="form-control" id="passwordr" name="passwordr" value=""
                                             placeholder="Password">
                                     </div>
                                     <div class="col-md-12 form-group">
-                                        <button type="submit" value="submit" class="btn_3">
+                                        <button id='registerBtn' onclick=register()  class="btn_3">
                                             Create an account
                                         </button>
                                     </div>
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -160,9 +158,48 @@
                     </div>
     </footer>
     <!-- Footer End-->
-    
-    <!-- JS here -->
+    <script>
+        function register(){
+            var request = new XMLHttpRequest();
+            var userid = document.getElementById('useridr').value;
+            var password = document.getElementById('passwordr').value;
+            var data = {'userid': userid, 'password': password};
+            console.log(data);
+            console.log('registerfun');
+            request.open("POST", "http://127.0.0.1:5010/register", true);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            request.setRequestHeader("Access-Control-Allow-Origin", "*");
+            request.setRequestHeader("Access-Control-Allow-Methods", "*");
+            request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+            request.onreadystatechange = function() {
+                if(this.readyState == 4 && this.status == 200) {
+                    returnText = this.responseText;
+                    console.log(returnText);
+                    dataObj = JSON.parse(returnText);
+                    swal({
+                        title: "Success!",
+                        text:"Account Successfully Created 😊",
+                        icon:"success"}).then(
+                        function() {
+                            window.location.href = "login";
+                        });
+                }else{
+                    returnText = this.responseText;
+                    console.log(returnText);
+                    dataObj = JSON.parse(returnText);
+                    swal({
+                        title:dataObj['message'],
+                        icon:"warning"}, 
+                    );
+                }
+            };
+            request.send(JSON.stringify(data));
+        }
 
+    </script>
+    <!-- JS here -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
 
     <!-- Jquery, Popper, Bootstrap -->
@@ -219,7 +256,7 @@
                         return
                     }
                     
-                    var serviceURL = "http://127.0.0.1:5010/loginc";
+                    var serviceURL = "http://127.0.0.1:5010/login";
 
                     var requestBody = {
                         'userid': userid,'password': password

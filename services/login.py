@@ -60,12 +60,13 @@ def index():
         return render_template("index.html")
     elif category == 'cash':
         return render_template("index2.html")
+        
 @app.route("/<filename>")
 def path_to_filename(filename):
     return render_template(f"{filename}.html")
 
 
-@app.route("/loginc", methods=['POST'])
+@app.route("/login", methods=['POST'])
 def loginCustomer():
     serviceName = 'loginCustomer'
     data = request.get_json()
@@ -75,7 +76,7 @@ def loginCustomer():
     user = Account.query.filter_by(userid = loginid).first()
     session['category'] = category
     if (user and user.password == loginpassword):
-        return redirect(url_for('index'))
+        return redirect(url_for('index'), 307)
     else:
         return jsonify("Login Failed"), 500 
 
@@ -92,6 +93,15 @@ def custdetails():
     else:
         return jsonify("Login Failed"), 500 
 
+@app.route("/register", methods=['POST'])
+def register():
+    data = request.get_json()
+    loginid = data['userid']
+    password = data['password']
+    user = Account(loginid,password,0)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'message':'Account Created'}), 200
 
         
 if __name__ == '__main__':
