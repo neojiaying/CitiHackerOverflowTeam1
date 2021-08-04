@@ -48,6 +48,7 @@
                         <div class="header-right">
                             <ul>
                                 <li> <a href="login"><span>Login/Register</span></a></li>
+                                <li> <button id='logout' onclick=logout() >Logout</button></li>
                                 <li> <a href="vouchers"><span>My Vouchers</span></a></li>
                                 <li> <a href="profile"><span class="flaticon-user"></span></a></li>
                                 <li><a href="cart"><span class="flaticon-shopping-cart"></span></a> </li>
@@ -268,6 +269,14 @@
     
 
     <!-- JS here -->
+    <script>
+        function logout(){
+            window.sessionStorage.setItem("userid", '');
+            window.location.href = '/login';
+        }
+        let userid = window.sessionStorage.getItem("userid");
+        console.log(userid);
+    </script>
 
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
     <!-- Jquery, Popper, Bootstrap -->
