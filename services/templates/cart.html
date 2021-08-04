@@ -191,22 +191,23 @@
 
   <!-- JS here -->
   <script>
-       function logout(){
-            window.sessionStorage.setItem("userid", '');
-            window.location.href = '/login';
-        }
+        function logout(){
+                window.sessionStorage.setItem("userid", '');
+                window.location.href = '/login';
+            }
 
-        let userid = window.sessionStorage.getItem("userid");
-        console.log(userid);
+            let userid = window.sessionStorage.getItem("userid");
+            console.log(userid);
 
-        if (userid==''){
-            document.getElementById('logoutBtn').style.display = "none";
-            document.getElementById('vouchersBtn').style.display = "none";
-            document.getElementById('profileBtn').style.display = "none";
-            document.getElementById('cartBtn').style.display = "none";
-        } else {
-            document.getElementById('loginBtn').style.display = "none";
-        }
+            if (userid==''){
+                document.getElementById('logoutBtn').style.display = "none";
+                document.getElementById('vouchersBtn').style.display = "none";
+                document.getElementById('profileBtn').style.display = "none";
+                document.getElementById('cartBtn').style.display = "none";
+            } else {
+                document.getElementById('loginBtn').style.display = "none";
+            }
+        var cart = JSON.parse(window.sessionStorage.getItem("cart"));
   </script>
 
   <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>

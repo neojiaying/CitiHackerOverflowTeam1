@@ -285,6 +285,31 @@
         } else {
             document.getElementById('loginBtn').style.display = "none";
         }
+        var request = new XMLHttpRequest();
+        request.open("GET", "http://127.0.0.1:5020/getpopularvouchers", true);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        request.setRequestHeader("Access-Control-Allow-Origin", "*");
+        request.setRequestHeader("Access-Control-Allow-Methods", "*");
+        request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+        request.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                returnText = this.responseText;
+                dataObj = JSON.parse(returnText);
+                console.log(dataObj);
+                for(var i in dataObj['vouchers']){
+                    console.log(dataObj['vouchers'][i])
+                    document.getElementById("displayvouchers").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
+                        <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
+                        <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
+                    </div>`
+                }
+            }else{
+                // console.log(this.responseText)
+                //Prompt Error Message
+            }
+        };
+        request.send();
     </script>
 
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>

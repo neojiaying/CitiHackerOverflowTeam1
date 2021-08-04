@@ -75,6 +75,7 @@ class Voucher(db.Model):
         self.vouchercost = vouchercost
         self.voucheramt = voucheramt
 
+    
 
     def json(self):
         return {"voucherid": self.voucherid, "vouchername": self.vouchername, "vouchercost": self.vouchercost, "voucheramt": self.voucheramt}
@@ -182,6 +183,34 @@ def getvouchersbyuser():
             vouchers.append(p.voucherid)
             statuses.append(p.status)
         return jsonify({'vouchers':vouchers, 'status': statuses}), 200
+    else:
+        return 500
+
+@app.route("/getallvouchers", methods=['GET'])
+def getallvouchers():
+    vouchers = Voucher.query.all()
+    voucherlist = []
+    if vouchers:
+        eprint(vouchers)
+        for v in vouchers:
+            voucherlist.append(v.json())
+        return jsonify({'vouchers':voucherlist}), 200
+    else:
+        return 500
+
+@app.route("/getpopularvouchers", methods=['GET'])
+def getpopularvouchers():
+    vouchers = Voucher.query.all()
+    purchase = Purchase.query.select('voucherid',db.func.count('voucherid').label('count'))\
+                    .group_by('voucherid')\
+                    .order_by('count')
+    eprint(purchase)
+    voucherlist = []
+    if vouchers:
+        # eprint(vouchers)
+        for v in vouchers:
+            voucherlist.append(v.json())
+        return jsonify({'vouchers':voucherlist}), 200
     else:
         return 500
 
