@@ -56,11 +56,11 @@ def eprint(*args, **kwargs):
 @app.route("/index")
 def index():
     category = session['category']
-    if category == 'cust':
+    if category == 'cust' or category == '':
         return render_template("index.html")
     elif category == 'cash':
         return render_template("index2.html")
-        
+
 @app.route("/<filename>")
 def path_to_filename(filename):
     return render_template(f"{filename}.html")
