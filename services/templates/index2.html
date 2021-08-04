@@ -48,8 +48,11 @@
                         <!-- Header Right -->
                         <div class="header-right">
                             <ul>
-                                <li> <a href="profile"><span class="flaticon-user"></span></a></li>
-                                <li><a href="cart"><span class="flaticon-shopping-cart"></span></a> </li>
+                                <li> <a href="login"><span id="loginBtn">Login/Register</span></a></li>
+                                <li> <span id='logoutBtn' onclick=logout() >Logout</span></li>
+                                <li> <a href="vouchers"><span id="vouchersBtn">My Vouchers</span></a></li>
+                                <li> <a href="profile"><span id="profileBtn" class="flaticon-user"></span></a></li>
+                                <li><a href="cart"><span id="cartBtn" class="flaticon-shopping-cart"></span></a> </li>
                             </ul>
                         </div>
                     </div>
@@ -101,6 +104,23 @@
 
     <!-- JS here -->
     <script>
+        function logout(){
+            window.sessionStorage.setItem("userid", '');
+            window.location.href = '/login';
+        }
+
+        let userid = window.sessionStorage.getItem("userid");
+        console.log(userid);
+
+        if (userid==''){
+            document.getElementById('logoutBtn').style.display = "none";
+            document.getElementById('vouchersBtn').style.display = "none";
+            document.getElementById('profileBtn').style.display = "none";
+            document.getElementById('cartBtn').style.display = "none";
+        } else {
+            document.getElementById('loginBtn').style.display = "none";
+        }
+
         var resultContainer = document.getElementById('qr-reader-results');
         var lastResult, countResults = 0;
         var scannedid = '';
