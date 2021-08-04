@@ -290,6 +290,8 @@
             }
             window.sessionStorage.setItem("cart", JSON.stringify(cart));
             console.log(cart)
+            cartQuantity++;
+            updateCartNumber();
         }
 
         function updateCartNumber(){
