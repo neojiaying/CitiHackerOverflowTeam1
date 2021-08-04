@@ -223,7 +223,7 @@
                     var serviceURL = "http://127.0.0.1:5010/loginc";
 
                     var requestBody = {
-                        userid: userid, password: password
+                        'userid': userid,'password': password
                     };
 
                     postData(serviceURL, requestBody);
@@ -238,17 +238,21 @@
                         body: JSON.stringify(requestBody)
                     }
                     try {
+                        window.sessionStorage.setItem("userid", requestBody['userid']);
                         const response = await fetch(serviceURL, requestParam);
                         console.log(response.status);
  
                         if (response.redirected) {
+                            
                             window.location.href = response.url;
                         }
 
                         else{
+                            window.sessionStorage.setItem("userid", '');
                             alert('Invalid Username/Password! Please try again.');
                         }
                     } catch (error) {
+                        window.sessionStorage.setItem("userid", '');
                         console.error(error);
                     }
                 }

@@ -63,7 +63,7 @@ class Voucher(db.Model):
             - json(self)
     """
     __tablename__ = 'vouchers'
-    voucherid = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    voucherid = db.Column(db.String(64), primary_key=True)
     vouchername = db.Column(db.String(64), nullable=False)
     vouchercost = db.Column(db.Float(precision=2), nullable=False)
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
@@ -89,7 +89,7 @@ class Purchase(db.Model):
     __tablename__ = 'purchase'
     purchaseid = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.String(64), nullable=False)
-    voucherid = db.Column(db.Integer, nullable=False)
+    voucherid = db.Column(db.String(64), nullable=False)
     purchasedatetime = db.Column(db.DateTime, nullable=False)
     expirydate = db.Column(db.Date, nullable=False)
     points = db.Column(db.Float(precision=2), nullable=False)
@@ -154,7 +154,6 @@ def buyvoucher():
 @app.route("/generatevoucher", methods=['POST'])
 @cross_origin()
 def generate():
-    serviceName = 'redeemvoucher'
     data = request.get_json()
     userid = data['userid']
     voucherid = data['voucherid']
@@ -167,6 +166,22 @@ def generate():
         myimage = buffer.getvalue()
         eprint(myimage)
         return (base64.b64encode(myimage)), 200
+    else:
+        return 500
+
+@app.route("/getvouchersbyuser", methods=['POST'])
+def getvouchersbyuser():
+    data = request.get_json()
+    userid = data['userid']
+    purchase = Purchase.query.filter_by(userid=userid)
+    if purchase:
+        eprint(purchase)
+        vouchers = []
+        statuses = []
+        for p in purchase:
+            vouchers.append(p.voucherid)
+            statuses.append(p.status)
+        return jsonify({'vouchers':vouchers, 'status': statuses}), 200
     else:
         return 500
 

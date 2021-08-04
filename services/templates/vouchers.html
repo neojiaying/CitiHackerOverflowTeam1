@@ -46,7 +46,6 @@
                        <!-- Header Right -->
                        <div class="header-right">
                             <ul>
-                                <li> <a href="login.html"><span>Login/Register</span></a></li>
                                 <li> <a href="vouchers.html"><span>My Vouchers</span></a></li>
                                 <li> <a href="profile.html"><span class="flaticon-user"></span></a></li>
                                 <li><a href="cart.html"><span class="flaticon-shopping-cart"></span></a> </li>
@@ -79,27 +78,11 @@
             </div>
         </div>
         <!-- Hero Area End-->
-        <img id='qrimage' src=''>
+       
         <!--================login_part Area =================-->
         <section class="login_part section_padding ">
             <div class="container pb-5">
-                <div class="row align-items-center">
-                    <div class="col-lg-6 col-md-6 pb-5">
-                        <img class="w-100 pb-3" src="../static\img\vouchers\shakeshack10.jpg">
-                        <center><a href="#" class="btn view-btn1 redeem-btn">Redeem Now</a></center>
-                    </div>
-                    <div class="col-lg-6 col-md-6 pb-5">
-                        <img class="w-100 pb-3" src="../static\img\vouchers\adidas100.jpg">
-                        <center><a href="#" class="btn view-btn1 redeem-btn">Redeem Now</a></center>
-                    </div>
-                    <div class="col-lg-6 col-md-6 pb-5">
-                        <img class="w-100 pb-3" src="../static\img\vouchers\fiveguys20.jpg">
-                        <center><a href="#" class="btn view-btn1 redeem-btn">Redeem Now</a></center>
-                    </div> 
-                    <div class="col-lg-6 col-md-6 pb-5">
-                        <img class="w-100 pb-3" src="../static\img\vouchers\adidas50.jpg">
-                        <center><a href="#" class="btn view-btn1 redeem-btn">Redeem Now</a></center>
-                    </div> 
+                <div class="row align-items-center" id = 'displayvouchers'>
                 </div>
             </div>
         </section>
@@ -132,9 +115,11 @@
     
     <!-- JS here -->
     <script>
+        let userid = window.sessionStorage.getItem("userid");
         var request = new XMLHttpRequest();
-        var data = {userid: "cust123", voucherid: 2500}
-        request.open("POST", "http://127.0.0.1:5020/generatevoucher", true);
+        var data = {'userid': userid}
+        console.log(data)
+        request.open("POST", "http://127.0.0.1:5020/getvouchersbyuser", true);
         request.setRequestHeader("Content-Type", "application/json");
         request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         request.setRequestHeader("Access-Control-Allow-Origin", "*");
@@ -143,14 +128,56 @@
         request.onreadystatechange = function() {
             if(this.readyState == 4 && this.status == 200) {
                 returnText = this.responseText;
-                // console.log(returnText)
-                document.getElementById('qrimage').src = "data:image/png;base64,"+returnText
+                dataObj = JSON.parse(returnText);
+                for(var i in dataObj['vouchers']){
+                    console.log(dataObj['vouchers'][i])
+                    if (dataObj['status'][i]=='Redeemable'){
+                        document.getElementById("displayvouchers").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
+                            <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
+                            <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
+                        </div>`
+                    }
+                    else {
+                        document.getElementById("displayvouchers").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
+                            <img class="w-100 pb-3" style="opacity:0.5;filter:alpha(opacity=50)" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
+                            <center><button id = 'redeembtn' disabled onclick=redeemQr('${dataObj['vouchers'][i]}') style="background:grey" class="btn view-btn1 redeem-btn">Redeemed</a></center>
+                        </div>`
+                    }
+                }
             }else{
                 // console.log(this.responseText)
                 //Prompt Error Message
             }
         };
         request.send(JSON.stringify(data));
+        function redeemQr(id){
+            let userid = window.sessionStorage.getItem("userid");
+            var request = new XMLHttpRequest();
+            var data = {'userid': userid, 'voucherid': id}
+            console.log(data)
+            request.open("POST", "http://127.0.0.1:5020/generatevoucher", true);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            request.setRequestHeader("Access-Control-Allow-Origin", "*");
+            request.setRequestHeader("Access-Control-Allow-Methods", "*");
+            request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+            request.onreadystatechange = function() {
+                if(this.readyState == 4 && this.status == 200) {
+                    returnText = this.responseText;
+                    // console.log(returnText)
+                    swal({
+                        title:"QR Code",
+                        icon:"data:image/png;base64,"+returnText
+                    });
+                    // document.getElementById('qrimage').src = "data:image/png;base64,"+returnText
+                }else{
+                    // console.log(this.responseText)
+                    //Prompt Error Message
+                }
+            };
+            request.send(JSON.stringify(data));
+        }
+        
     </script>
 
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
@@ -186,6 +213,9 @@
     <!-- Jquery Plugins, main Jquery -->	
     <script src="../static/js/plugins.js"></script>
     <script src="../static/js/main.js"></script>
+
+    <!-- Sweet Alerts -->	
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 </body>
     
