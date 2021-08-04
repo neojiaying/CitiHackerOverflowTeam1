@@ -39,9 +39,7 @@
                         <div class="main-menu d-none d-lg-block">
                             <nav>                                                
                                 <ul id="navigation">  
-                                    <li><a href="index">Home</a></li>
-                                    <li><a href="shop">shop</a></li>
-                                    <li><a href="about">about</a></li>
+                                    <li><a href="index">Redeem Customer's QR</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -50,9 +48,6 @@
                             <ul>
                                 <li> <a href="login"><span id="loginBtn">Login/Register</span></a></li>
                                 <li> <span id='logoutBtn' onclick=logout() >Logout</span></li>
-                                <li> <a href="vouchers"><span id="vouchersBtn">My Vouchers</span></a></li>
-                                <li> <a href="profile"><span id="profileBtn" class="flaticon-user"></span></a></li>
-                                <li><a href="cart"><span id="cartBtn" class="flaticon-shopping-cart"></span></a> </li>
                             </ul>
                         </div>
                     </div>
@@ -66,15 +61,44 @@
         <!-- Header End -->
     </header>
     <main>
-        <!--? QR Reader Start-->
-        <button id = "qrbutton" onclick=startqr()>Start QR</button>
-        <div id="qr-reader" style="width:500px"></div>
-        <div id="qr-reader-results"></div>
-        <button id = "redeembutton" onclick=redeemQR()>Redeem Voucher</button>
-        <!-- QR Reader End-->
-        <div>
-            <div id = "userid"></div><div id = "voucherid"></div><div id = "vouchername"></div><div id = "voucheramt"></div><div id = "status"></div>
+        <!--? Popular Items Start -->
+        <div class="popular-items section-padding30">
+            <div class="container">
+                <!-- Section tittle -->
+                <div class="row justify-content-space-evenly">
+                    <div class="col-xl-7 col-lg-8 col-md-10">
+                        <div class="section-tittle mb-70 text-center">
+                            <h2>Popular Vouchers</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Start QR Button -->
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                        <div class="row justify-content-center">
+                            <div class="room-btn pb-5">
+                                <span id = "qrbutton" onclick=startqr() class="btn view-btn1" style="
+                                width: 145px; font-size:10px; margin-right: 20px;">Scan QR</span>
+                               
+                            </div>
+                            <div class="room-btn pb-5">
+                                <span id = "redeembutton" onclick=redeemQR() class="btn view-btn1" style="
+                                width: 145px; font-size:10px; margin-right: 20px;">Redeem Voucher</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                        <div id="qr-reader-results"></div>
+                    </div>
+                    <div id="qr-reader" style="width:500px"></div>
+                </div>
+                <div style="font-family: 'Josefin Sans', sans-serif;">
+                    <center><div id = "userid"></div><div id = "voucherid"></div><div id = "vouchername"></div><div id = "voucheramt"></div><div id = "status"></div></center>
+                </div>
+                </div>
+            </div>
         </div>
+        <!-- Popular Items End -->
     </main>
     <footer>
         <!-- Footer Start-->
@@ -146,11 +170,11 @@
                     vouchername = dataObj['vouchername']
                     voucheramt = dataObj['voucheramt']
                     status = dataObj['status']
-                    document.getElementById('voucherid').innerText = 'Voucher id = '+voucherid
-                    document.getElementById('voucheramt').innerText = 'Voucher amount = '+voucheramt
-                    document.getElementById('userid').innerText = 'User id = '+userid
-                    document.getElementById('vouchername').innerText = 'Voucher amount = '+vouchername
-                    document.getElementById('status').innerText = 'Status = '+status
+                    document.getElementById('voucherid').innerText = 'Voucher ID: '+voucherid
+                    document.getElementById('voucheramt').innerText = 'Voucher Amount: '+voucheramt
+                    document.getElementById('userid').innerText = 'User ID: '+userid
+                    document.getElementById('vouchername').innerText = 'Voucher Amount: '+vouchername
+                    document.getElementById('status').innerText = 'Status: ' + status +
                     html5QrCode.stop().then((ignore) => {
                     // QR Code scanning is stopped.
                     document.getElementById('qr-reader').innerHTML = '';
@@ -195,7 +219,21 @@
             };
             request.send(JSON.stringify(data));
         };
+
+
+        // Modal for Scanning
+
+        function showCam(){
+            alert("hi");
+            document.getElementById("displayvouchers").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
+                                <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
+                                <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
+                            </div>`
+                        }
     </script>
+
+
+
 
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
     <!-- Jquery, Popper, Bootstrap -->
@@ -229,6 +267,8 @@
     <!-- Jquery Plugins, main Jquery -->	
     <script src="../static/js/plugins.js"></script>
     <script src="../static/js/main.js"></script>
+
+
 
     
     
