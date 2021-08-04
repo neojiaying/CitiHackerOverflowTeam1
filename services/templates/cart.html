@@ -116,7 +116,9 @@
               <th style="width:33%">Quantity</th>
               <th style="width:20%">Unit Price</th>
             </table>
-
+            <div>
+                <button id='clearcartbtn' onclick=clearCart() class="btn btn-primary btn-block d-flex justify-content-center mt-3" type="button"><span>Clear Cart<i class="fa fa-long-arrow-right ml-1"></i></span></button>
+            </div>
             <div class="col-md-4 pt-5">
                 <div class="payment-info">
                     <div class="d-flex justify-content-between align-items-center"><span>Card details</span></div>
@@ -238,6 +240,12 @@
                 }
             };
             request.send(JSON.stringify(data));
+        }
+
+        function clearCart(){
+            var cart = {};
+            window.sessionStorage.setItem("cart", JSON.stringify(cart));
+            window.location.href = "cart";
         }
 
   </script>
