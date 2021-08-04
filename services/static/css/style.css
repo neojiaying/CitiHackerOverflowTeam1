@@ -2443,7 +2443,7 @@ input:focus {
 }
 @media (max-width: 575px) {
     .header-area .main-header .menu-wrapper .header-right span {
-        padding: 6px 9px;
+        padding: 6px 24px;
     }
 }
 @media only screen and (min-width: 768px) and (max-width: 991px) {
