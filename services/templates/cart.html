@@ -228,8 +228,7 @@
                         text:"Thank you for shopping with us. Enjoy your vouchers 😊",
                         icon:"success"}).then(
                         function() {
-                            var cart = {};
-                            window.sessionStorage.setItem("cart", JSON.stringify(cart));
+                            clearCart();
                             window.location.href = "index";
                         }
                     );
