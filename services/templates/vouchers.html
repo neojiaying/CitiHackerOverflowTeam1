@@ -117,13 +117,11 @@
     
     <!-- JS here -->
     <script>
+        let userid = window.sessionStorage.getItem("userid");
         function logout(){
             window.sessionStorage.setItem("userid", '');
             window.location.href = '/login';
         }
-
-        let userid = window.sessionStorage.getItem("userid");
-        console.log(userid);
 
         if (userid==''){
             document.getElementById('logoutBtn').style.display = "none";
@@ -134,7 +132,6 @@
             document.getElementById('loginBtn').style.display = "none";
         }
 
-        let userid = window.sessionStorage.getItem("userid");
         var request = new XMLHttpRequest();
         var data = {'userid': userid}
         console.log(data)
