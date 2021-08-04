@@ -23,6 +23,76 @@
         <link rel="stylesheet" href="../static/css/style.css">
 </head>
 
+<style>
+
+    /* :: 10.0 Team Member Area CSS */
+.single-team-member-area {
+  position: relative;
+  z-index: 1;
+  text-align: center; }
+  .single-team-member-area .team-thumb {
+    -webkit-transition-duration: 500ms;
+    transition-duration: 500ms;
+    position: relative;
+    z-index: 1;
+    width: 180px;
+    border-radius: 50%;
+    margin: 0 auto 40px;
+    height: 180px; }
+    .single-team-member-area .team-thumb::after {
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      content: '';
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      border: 8px solid #003679;
+      top: 0;
+      left: 0;
+      position: absolute;
+      z-index: 100;
+      border-radius: 50%;
+      opacity: 0;
+      visibility: hidden; }
+    .single-team-member-area .team-thumb img {
+      border-radius: 50%; }
+    .single-team-member-area .team-thumb .view-more a {
+      position: absolute;
+      width: 62px;
+      height: 62px;
+      border-radius: 15px;
+      background-color: #ffbb38;
+      text-align: center;
+      bottom: -10px;
+      right: 0;
+      z-index: 300;
+      color: #ffffff;
+      line-height: 62px;
+      font-size: 18px; }
+      .single-team-member-area .team-thumb .view-more a:hover {
+        background-color: #003679; }
+    .single-team-member-area .team-thumb:hover {
+      box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.2); }
+      .single-team-member-area .team-thumb:hover::after {
+        opacity: 1;
+        visibility: visible; }
+  .single-team-member-area .team-info {
+    position: relative;
+    z-index: 1; }
+    .single-team-member-area .team-info h5 {
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      font-size: 18px;
+      margin-bottom: 5px; }
+    .single-team-member-area .team-info h6 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 0;
+      color: #6e6e6e; }
+  .single-team-member-area:hover .team-info h5 {
+    color: #ffbb38; }
+</style>
+
 <body>
     <header>
         <!-- Header Start -->
@@ -86,16 +156,119 @@
                 <div class="row">
                     <div class="offset-xl-1 col-lg-8">
                         <div class="about-details-cap mb-50">
+
+                            <h4>Our Mission</h4>
+                            <p>To create and promote an environmentally friendly, seamless and satisfying click and mortar shopping experience for all ages. </p>
                             <h4>Our Vision</h4>
-                            <p> To enhance customers' shopping experiences through contactless payment.</p>
+                            <p>Greener vouchers at your fingertips that won't clutter your wallet.</p>
 
                         </div>
 
                         <div class="about-details-cap mb-50">
                             <h4>Our Team</h4>
-                            <p>WHAT SHOULD WE WRITE HERE?</p>
-                            <p>WHAT SHOULD WE WRITE HERE?</p>
-                            <p>WHAT SHOULD WE WRITE HERE?</p>
+                                <!-- ##### Team Member Area Start ##### -->
+                                <section class="team-area section-padding-100-0">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <!-- Section Heading -->
+                                                <div class="section-heading text-center mb-100">
+                                                    <div class="line"></div>
+                                                    <p>Take look at our</p>
+                                                    <h2>Our team</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12 col-sm-6 col-lg-1"></div>
+                                            <!-- Single Team Member Area -->
+                                            <div class="col-12 col-sm-6 col-lg-2">
+                                                <div class="single-team-member-area mb-100">
+                                                    <div class="team-thumb">
+                                                        <img src="../static/img/team/brendon.jpg" alt="" style="width:90%;">
+                                                        <!-- View More -->
+                                                        <div class="view-more">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="team-info">
+                                                        <h5>Brendon</h5>
+                                                        <h6>CEO</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 col-sm-6 col-lg-2">
+                                                <div class="single-team-member-area mb-100">
+                                                    <div class="team-thumb">
+                                                        <img src="../static/img/team/earnest.jpg" alt="" style="width:90%">
+                                                        <!-- View More -->
+                                                        <div class="view-more">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="team-info">
+                                                        <h5>Earnest</h5>
+                                                        <h6>CTO</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Single Team Member Area -->
+                                            <div class="col-12 col-sm-6 col-lg-2">
+                                                <div class="single-team-member-area mb-100">
+                                                    <div class="team-thumb">
+                                                        <img src="../static/img/team/jy.jpg" alt="" style="width:90%">
+                                                        <!-- View More -->
+                                                        <div class="view-more">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="team-info">
+                                                        <h5>Jia Ying</h5>
+                                                        <h6>CIO</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Single Team Member Area -->
+                                            <div class="col-12 col-sm-6 col-lg-2">
+                                                <div class="single-team-member-area mb-100">
+                                                    <div class="team-thumb">
+                                                        <img src="../static/img/team/wl.jpg" alt="" style="width:90%">
+                                                        <!-- View More -->
+                                                        <div class="view-more">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="team-info">
+                                                        <h5>Wei Ling</h5>
+                                                        <h6>COO</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Single Team Member Area -->
+                                            <div class="col-12 col-sm-6 col-lg-2">
+                                                <div class="single-team-member-area mb-100">
+                                                    <div class="team-thumb">
+                                                        <img src="../static/img/team/kh.jpg" alt="" style="width:90%">
+                                                        <!-- View More -->
+                                                        <div class="view-more">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="team-info">
+                                                        <h5>Kin Hou</h5>
+                                                        <h6>Intern</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </section>
 
                         </div>
                     </div>
