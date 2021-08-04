@@ -85,9 +85,8 @@ def custdetails():
     serviceName = 'custDetails'
     data = request.get_json()
     loginid = data['userid']
-    loginpassword = data['password']
     user = Account.query.filter_by(userid = loginid).first()
-    if (user and user.password == loginpassword):
+    if user:
         useraccount = {"userid": loginid, "points": user.loyaltypoints}
         return jsonify(useraccount), 200
     else:

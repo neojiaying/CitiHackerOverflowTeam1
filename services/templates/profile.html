@@ -92,11 +92,11 @@
                                 margin-top: 20px;
                                 ">
                             <div class="card-body">
-                                <h5 class="card-title align-text text-center mb-2">John Doe</h5>
-                                <p class="card-title align-text text-center loyalty mb-4">Loyalty Points: 10</p>
+                                <h5 id ='userid'class="card-title align-text text-center mb-2"></h5>
+                                <p id ='points' class="card-title align-text text-center loyalty mb-4"></p>
                                 <!-- <p class="card-text">Loyalty Points: 10 </p> -->
-                                <p class="card-text">Email: johndoe@abc.com</p>
-                                <p class="card-text">Password: ********</p>
+                                <!-- <p class="card-text">Email: johndoe@abc.com</p>
+                                <p class="card-text">Password: ********</p> -->
                                 <a href="#" class="btn btn-primary d-flex justify-content-center">Update Profile</a>
                             </div>
                         </div>
@@ -133,6 +133,33 @@
 
     
     <!-- JS here -->
+    <script>
+        let userid = window.sessionStorage.getItem("userid");
+        var request = new XMLHttpRequest();
+        var data = {'userid': userid}
+        console.log(data)
+        request.open("POST", "http://127.0.0.1:5010/details", true);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        request.setRequestHeader("Access-Control-Allow-Origin", "*");
+        request.setRequestHeader("Access-Control-Allow-Methods", "*");
+        request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+        request.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                returnText = this.responseText;
+                dataObj = JSON.parse(returnText);
+                console.log(dataObj);
+                userid = dataObj['userid']
+                points = dataObj['points']
+                document.getElementById('userid').innerText = userid
+                document.getElementById('points').innerText = 'Loyalty Points: '+points
+            }else{
+                // console.log(this.responseText)
+                //Prompt Error Message
+            }
+        };
+        request.send(JSON.stringify(data));
+    </script>
 
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
 
