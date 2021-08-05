@@ -214,7 +214,7 @@ def getPurchasesStat():
         brand[v.voucherid] = v.brand
     for p in purchases:
         data[brand[p.voucherid]]['purchaseAmount'] += cost[p.voucherid]
-        data[brand[p.voucherid]]['numRedeemed'] += 1 if p.status == 'Redemed' else 0
+        data[brand[p.voucherid]]['numRedeemed'] += 1 if p.status == 'Redeemed' else 0
         data[brand[p.voucherid]]['numPurchased'] += 1
 
     return jsonify(data), 200
