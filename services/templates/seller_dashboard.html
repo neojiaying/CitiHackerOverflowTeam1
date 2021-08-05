@@ -1,6 +1,7 @@
 <!doctype html>
 <html class="no-js" lang="zxx">
     <script src="https://unpkg.com/html5-qrcode@2.0.11/dist/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -40,7 +41,7 @@
                             <nav>                                                
                                 <ul id="navigation">  
                                     <li><a href="index">Redeem Customer's QR</a></li>
-                                    <li><a href="seller_dashboard">Dashboard</a></li>
+                                    <li><a href="seller_dashboard">Statistics</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -62,6 +63,7 @@
         <!-- Header End -->
     </header>
     <main>
+        
         <!--? Popular Items Start -->
         <div class="popular-items section-padding30" style="
         padding-top: 120px;
@@ -76,37 +78,20 @@
                     </div>
                 </div>
                 <div class="row justify-content-center">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm">
                         <div class="row justify-content-center pb-5">
-                            <!-- HTML -->
-                            <!-- <h3>Sales by Country</h3> -->
-                            <div id="chartdiv"></div>
+                            <canvas id="myChart"></canvas>
+                            
                         </div>
-                    </div>
-                </div>
-                
-                <div class="row justify-content-center">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm">
-                        <div class="row justify-content-center pb-2">
-                            <!-- <h3>Top Brands</h3> -->
-                            <div id="chartdiv2"></div>
+                        <div class="row justify-content-center pb-5">
+                            <canvas id="myChart2"></canvas>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="row justify-content-center">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm">
-                        <div class="row justify-content-center">
-                            <!-- <h3>Market Basket Analysis</h3> -->
-                            <div id="chartdiv3"></div>                            
+                        <div class="row justify-content-center pb-5">
+                            <canvas id="myChart3"></canvas>
                         </div>
-                    </div>
                 </div>
-                    
-                </div>
-                
-                </div>
+
             </div>
+
         </div>
         <!-- Popular Items End -->
     </main>
@@ -221,1703 +206,203 @@
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
     
     <!-- Chart code -->
-    <script>
-    am4core.ready(function() {
-    
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-    
-    var chart = am4core.create("chartdiv", am4charts.RadarChart);
-    
-    chart.data = [{
-     "country": "USA",
-     "visits": 2025
-    }, {
-     "country": "CN",
-     "visits": 1882
-    }, {
-     "country": "JPN",
-     "visits": 1809
-    },{
-     "country": "UK",
-     "visits": 2000
-    }, {
-     "country": "SGP",
-     "visits": 3500
-    }];
-    
-    chart.innerRadius = am4core.percent(40)
-
-    var title = chart.titles.create();
-    title.text = "Sales by Country";
-    title.fontSize = 25;
-    title.fontFamily = 'Josefin Sans, sans-serif';
-    title.marginBottom = 150;
-   
-    
-    var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-    categoryAxis.renderer.grid.template.location = 0;
-    categoryAxis.dataFields.category = "country";
-    categoryAxis.renderer.minGridDistance = 60;
-    categoryAxis.renderer.inversed = true;
-    categoryAxis.renderer.labels.template.location = 0.5;
-    categoryAxis.renderer.grid.template.strokeOpacity = 0.08;
-    
-    var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    valueAxis.min = 0;
-    valueAxis.extraMax = 0.1;
-    valueAxis.renderer.grid.template.strokeOpacity = 0.08;
-    
-    chart.seriesContainer.zIndex = -10;
-    
-    
-    var series = chart.series.push(new am4charts.RadarColumnSeries());
-    series.dataFields.categoryX = "country";
-    series.dataFields.valueY = "visits";
-    series.tooltipText = "{valueY.value}"
-    series.columns.template.strokeOpacity = 0;
-    series.columns.template.radarColumn.cornerRadius = 5;
-    series.columns.template.radarColumn.innerCornerRadius = 0;
-    
-    chart.zoomOutButton.disabled = true;
-    
-    // as by default columns of the same series are of the same color, we add adapter which takes colors from chart.colors color set
-    series.columns.template.adapter.add("fill", (fill, target) => {
-     return chart.colors.getIndex(target.dataItem.index);
-    });
-    
-    setInterval(()=>{
-     am4core.array.each(chart.data, (item)=>{
-       item.visits *= Math.random() * 0.5 + 0.5;
-       item.visits += 10;
-     })
-     chart.invalidateRawData();
-    }, 2000)
-    
-    categoryAxis.sortBySeries = series;
-    
-    chart.cursor = new am4charts.RadarCursor();
-    chart.cursor.behavior = "none";
-    chart.cursor.lineX.disabled = true;
-    chart.cursor.lineY.disabled = true;
-    
-    }); // end am4core.ready()
-    </script>
-
-    <!-- Second chart -->
-
-    <!-- Styles -->
-<style>
-    #chartdiv2 {
-      width: 100%;
-      height: 500px;
+<script>
+    const CHART_COLORS = {
+        red: 'rgb(255, 99, 132)',
+        orange: 'rgb(255, 159, 64)',
+        yellow: 'rgb(255, 205, 86)',
+        green: 'rgb(75, 192, 192)',
+        blue: 'rgb(54, 162, 235)',
+        purple: 'rgb(153, 102, 255)',
+        grey: 'rgb(201, 203, 207)'
+    };
+    var data = {};
+    var dataObj = {};
+    function loadData(resolve){
+        var request = new XMLHttpRequest();
+        request.open("GET", "http://127.0.0.1:5020/getPurchasesStat", true);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        request.setRequestHeader("Access-Control-Allow-Origin", "*");
+        request.setRequestHeader("Access-Control-Allow-Methods", "*");
+        request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+        request.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                returnText = this.responseText;
+                dataObj = JSON.parse(returnText);
+                data = dataObj;
+                resolve(1);
+            }else{
+                // console.log(this.responseText)
+                //Prompt Error Message
+            }
+        };
+        request.send();
     }
-    </style>
+
+    function checkDataLoaded() {
+        return new Promise(resolve => {
+            loadData(resolve);
+            });
+    }   
+    function loadChart(){
+        var labels = [];
+        var datasets = [];
+        i = 0;
+        var purchaseAmount = [];
+        for (k in data){
+            labels.push(k);
+            purchaseAmount.push(data[k]['purchaseAmount']); 
+        }
+        var tmp = {};
+        tmp['backgroundColor'] = Object.values(CHART_COLORS);
+        tmp['data'] = purchaseAmount;
+        tmp['labels'] = labels
+        datasets.push(tmp);
+        console.log(data);
+        console.log(labels);
+        console.log(datasets);
+        var datat = {};
+        datat['labels'] = labels;
+        datat['datasets'] = datasets;
+        console.log(datat);
+        var config = {
+            type: 'pie',
+            data: datat,
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Purchase Amount by Brands ($)'
+                    }
+                },
+            },
+        };
+        var myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+
+
+        var labels = [];
+        var datasets = [];
+        i = 0;
+        var purchaseAmount = [];
+        for (k in data){
+            labels.push(k);
+            purchaseAmount.push(data[k]['numRedeemed']); 
+        }
+        var tmp = {};
+        tmp['backgroundColor'] = Object.values(CHART_COLORS);
+        tmp['data'] = purchaseAmount;
+        tmp['labels'] = labels
+        datasets.push(tmp);
+        console.log(data);
+        console.log(labels);
+        console.log(datasets);
+        var datat = {};
+        datat['labels'] = labels;
+        datat['datasets'] = datasets;
+        console.log(datat);
+        var config = {
+            type: 'pie',
+            data: datat,
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Number of Redeemed Vouchers by Brands'
+                    }
+                },
+            },
+        };
+        var myChart = new Chart(
+            document.getElementById('myChart2'),
+            config
+        );
+
+
+        var labels = [];
+        var datasets = [];
+        i = 0;
+        var purchaseAmount = [];
+        for (k in data){
+            labels.push(k);
+            purchaseAmount.push(data[k]['numPurchased']); 
+        }
+        var tmp = {};
+        tmp['backgroundColor'] = Object.values(CHART_COLORS);
+        tmp['data'] = purchaseAmount;
+        tmp['labels'] = labels
+        datasets.push(tmp);
+        console.log(data);
+        console.log(labels);
+        console.log(datasets);
+        var datat = {};
+        datat['labels'] = labels;
+        datat['datasets'] = datasets;
+        console.log(datat);
+        var config = {
+            type: 'pie',
+            data: datat,
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Number of Purchased Vouchers by Brands'
+                    }
+                },
+            },
+        };
+        var myChart = new Chart(
+            document.getElementById('myChart3'),
+            config
+        );
+    }
+    async function test(){
+        await checkDataLoaded();
+        loadChart();
+    }
+    test();
+    
+</script>
+<style>
+ #chartdiv2 {
+   width: 100%;
+     height: 500px;
+   }
+     </style>
     
     <!-- Resources -->
-    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
     
-    <!-- Chart code -->
-    <script>
-    am4core.ready(function() {
-    
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-    
-    var chart = am4core.create("chartdiv2", am4charts.XYChart);
-    chart.padding(40, 40, 40, 40);
-    
-    chart.numberFormatter.bigNumberPrefixes = [
-      { "number": 1e+3, "suffix": "K" },
-      { "number": 1e+6, "suffix": "M" },
-      { "number": 1e+9, "suffix": "B" }
-    ];
-    
-    var label = chart.plotContainer.createChild(am4core.Label);
-    label.x = am4core.percent(97);
-    label.y = am4core.percent(95);
-    label.horizontalCenter = "right";
-    label.verticalCenter = "middle";
-    label.dx = -15;
-    label.fontSize = 50;
-
-    var title = chart.titles.create();
-    title.text = "Top Brands";
-    title.fontSize = 25;
-    title.fontFamily = 'Josefin Sans, sans-serif';
-    title.marginBottom = 150;
-    
-    var playButton = chart.plotContainer.createChild(am4core.PlayButton);
-    playButton.x = am4core.percent(97);
-    playButton.y = am4core.percent(95);
-    playButton.dy = -2;
-    playButton.verticalCenter = "middle";
-    playButton.events.on("toggled", function(event) {
-      if (event.target.isActive) {
-        play();
-      }
-      else {
-        stop();
-      }
-    })
-    
-    var stepDuration = 4000;
-    
-    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
-    categoryAxis.renderer.grid.template.location = 0;
-    categoryAxis.dataFields.category = "network";
-    categoryAxis.renderer.minGridDistance = 1;
-    categoryAxis.renderer.inversed = true;
-    categoryAxis.renderer.grid.template.disabled = true;
-    
-    var valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
-    valueAxis.min = 0;
-    valueAxis.rangeChangeEasing = am4core.ease.linear;
-    valueAxis.rangeChangeDuration = stepDuration;
-    valueAxis.extraMax = 0.1;
-    
-    var series = chart.series.push(new am4charts.ColumnSeries());
-    series.dataFields.categoryY = "network";
-    series.dataFields.valueX = "MAU";
-    series.tooltipText = "{valueX.value}"
-    series.columns.template.strokeOpacity = 0;
-    series.columns.template.column.cornerRadiusBottomRight = 5;
-    series.columns.template.column.cornerRadiusTopRight = 5;
-    series.interpolationDuration = stepDuration;
-    series.interpolationEasing = am4core.ease.linear;
-    
-    var labelBullet = series.bullets.push(new am4charts.LabelBullet())
-    labelBullet.label.horizontalCenter = "right";
-    labelBullet.label.text = "{values.valueX.workingValue.formatNumber('#.0as')}";
-    labelBullet.label.textAlign = "end";
-    labelBullet.label.dx = -10;
-    
-    chart.zoomOutButton.disabled = true;
-    
-    // as by default columns of the same series are of the same color, we add adapter which takes colors from chart.colors color set
-    series.columns.template.adapter.add("fill", function(fill, target){
-      return chart.colors.getIndex(target.dataItem.index);
-    });
-    
-    var year = 2003;
-    label.text = year.toString();
-    
-    var interval;
-    
-    function play() {
-      interval = setInterval(function(){
-        nextYear();
-      }, stepDuration)
-      nextYear();
-    }
-    
-    function stop() {
-      if (interval) {
-        clearInterval(interval);
-      }
-    }
-    
-    function nextYear() {
-      year++
-    
-      if (year > 2018) {
-        year = 2003;
-      }
-    
-      var newData = allData[year];
-      var itemsWithNonZero = 0;
-      for (var i = 0; i < chart.data.length; i++) {
-        chart.data[i].MAU = newData[i].MAU;
-        if (chart.data[i].MAU > 0) {
-          itemsWithNonZero++;
-        }
-      }
-    
-      if (year == 2003) {
-        series.interpolationDuration = stepDuration / 4;
-        valueAxis.rangeChangeDuration = stepDuration / 4;
-      }
-      else {
-        series.interpolationDuration = stepDuration;
-        valueAxis.rangeChangeDuration = stepDuration;
-      }
-    
-      chart.invalidateRawData();
-      label.text = year.toString();
-    
-      categoryAxis.zoom({ start: 0, end: itemsWithNonZero / categoryAxis.dataItems.length });
-    }
-    
-    
-    categoryAxis.sortBySeries = series;
-    
-    var allData = {
-      "2003": [
-        {
-          "network": "Adidas",
-          "MAU": 0
-        },
-        {
-          "network": "A&W",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-    
-        {
-          "network": "BurgerKing",
-          "MAU": 4470000
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 0
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 0
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 0
-        }
-      ],
-      "2004": [
-        {
-          "network": "Adidas",
-          "MAU": 0
-        },
-        {
-          "network": "A&W",
-          "MAU": 3675135
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 5970054
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 980036
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 4900180
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 0
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 0
-        }
-      ],
-      "2005": [
-        {
-          "network": "Adidas",
-          "MAU": 0
-        },
-        {
-          "network": "A&W",
-          "MAU": 7399354
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 7459742
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 9731610
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 19490059
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 9865805
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 0
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 1946322
-        }
-      ],
-      "2006": [
-        {
-          "network": "Adidas",
-          "MAU": 0
-        },
-        {
-          "network": "A&W",
-          "MAU": 14949270
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 8989854
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 19932360
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 54763260
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 14966180
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 248309
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 0
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 19878248
-        }
-      ],
-      "2007": [
-        {
-          "network": "Adidas",
-          "MAU": 0
-        },
-        {
-          "network": "A&W",
-          "MAU": 29299875
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 24253200
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 29533250
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 69299875
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 26916562
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 488331
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 0
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 143932250
-        }
-      ],
-      "2008": [
-        {
-          "network": "Adidas",
-          "MAU": 100000000
-        },
-        {
-          "network": "A&W",
-          "MAU": 30000000
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 51008911
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 55045618
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 72408233
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 44357628
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 1944940
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 0
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 294493950
-        }
-      ],
-      "2009": [
-        {
-          "network": "Adidas",
-          "MAU": 276000000
-        },
-        {
-          "network": "A&W",
-          "MAU": 41834525
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 28804331
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 57893524
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 70133095
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 47366905
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 3893524
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 0
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 413611440
-        }
-      ],
-      "2010": [
-        {
-          "network": "Adidas",
-          "MAU": 517750000
-        },
-        {
-          "network": "A&W",
-          "MAU": 54708063
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 166029650
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 59953290
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 68046710
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 49941613
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 43250000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 19532900
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 480551990
-        }
-      ],
-      "2011": [
-        {
-          "network": "Adidas",
-          "MAU": 766000000
-        },
-        {
-          "network": "A&W",
-          "MAU": 66954600
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 170000000
-        },
-        {
-          "network": "Nike",
-          "MAU": 0
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 46610848
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 46003536
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 47609080
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 0
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 92750000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 47818400
-        },
-        {
-          "network": "Sephora",
-          "MAU": 48691040
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 642669824
-        }
-      ],
-      "2012": [
-        {
-          "network": "Adidas",
-          "MAU": 979750000
-        },
-        {
-          "network": "A&W",
-          "MAU": 79664888
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 170000000
-        },
-        {
-          "network": "Nike",
-          "MAU": 107319100
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 0
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 45067022
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 146890156
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 160250000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 118123370
-        },
-        {
-          "network": "Sephora",
-          "MAU": 79195730
-        },
-        {
-          "network": "LV",
-          "MAU": 0
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 844638200
-        }
-      ],
-      "2013": [
-        {
-          "network": "Adidas",
-          "MAU": 1170500000
-        },
-        {
-          "network": "A&W",
-          "MAU": 80000000
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 170000000
-        },
-        {
-          "network": "Nike",
-          "MAU": 205654700
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 117500000
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 0
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 0
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 293482050
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 223675000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 196523760
-        },
-        {
-          "network": "Sephora",
-          "MAU": 118261880
-        },
-        {
-          "network": "LV",
-          "MAU": 300000000
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 1065223075
-        }
-      ],
-      "2014": [
-        {
-          "network": "Adidas",
-          "MAU": 1334000000
-        },
-        {
-          "network": "A&W",
-          "MAU": 0
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 170000000
-        },
-        {
-          "network": "Nike",
-          "MAU": 254859015
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 250000000
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 0
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 135786956
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 388721163
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 223675000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 444232415
-        },
-        {
-          "network": "Sephora",
-          "MAU": 154890345
-        },
-        {
-          "network": "LV",
-          "MAU": 498750000
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 1249451725
-        }
-      ],
-      "2015": [
-        {
-          "network": "Adidas",
-          "MAU": 1516750000
-        },
-        {
-          "network": "A&W",
-          "MAU": 0
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 170000000
-        },
-        {
-          "network": "Nike",
-          "MAU": 298950015
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 400000000
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 0
-        },
-        {
-          "network": "Oppo",
-          "MAU": 0
-        },
-        {
-          "network": "Sephora",
-          "MAU": 163346676
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 475923363
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 304500000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 660843407
-        },
-        {
-          "network": "Sephora",
-          "MAU": 208716685
-        },
-        {
-          "network": "LV",
-          "MAU": 800000000
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 1328133360
-        }
-      ],
-      "2016": [
-        {
-          "network": "Adidas",
-          "MAU": 1753500000
-        },
-        {
-          "network": "A&W",
-          "MAU": 0
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 398648000
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 550000000
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 0
-        },
-        {
-          "network": "Oppo",
-          "MAU": 143250000
-        },
-        {
-          "network": "Sephora",
-          "MAU": 238972480
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 238648000
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 0
-        },
-        {
-          "network": "Walmat",
-          "MAU": 565796720
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 314500000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 847512320
-        },
-        {
-          "network": "Sephora",
-          "MAU": 281026560
-        },
-        {
-          "network": "LV",
-          "MAU": 1000000000
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 1399053600
-        }
-      ],
-      "2017": [
-        {
-          "network": "Adidas",
-          "MAU": 2035750000
-        },
-        {
-          "network": "A&W",
-          "MAU": 0
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 495657000
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 750000000
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 0
-        },
-        {
-          "network": "Oppo",
-          "MAU": 195000000
-        },
-        {
-          "network": "Sephora",
-          "MAU": 297394200
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 239142500
-        },
-        {
-          "network": "Walmat",
-          "MAU": 593783960
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 328250000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 921742750
-        },
-        {
-          "network": "Sephora",
-          "MAU": 357569030
-        },
-        {
-          "network": "LV",
-          "MAU": 1333333333
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 1495657000
-        }
-      ],
-      "2018": [
-        {
-          "network": "Adidas",
-          "MAU": 2255250000
-        },
-        {
-          "network": "A&W",
-          "MAU": 0
-        },
-        {
-          "network": "BurgerKing",
-          "MAU": 0
-        },
-        {
-          "network": "PizzaHut",
-          "MAU": 0
-        },
-        {
-          "network": "Nike",
-          "MAU": 430000000
-        },
-        {
-          "network": "ShakeShack",
-          "MAU": 0
-        },
-        {
-          "network": "NewBalance",
-          "MAU": 1000000000
-        },
-        {
-          "network": "Uniqlo",
-          "MAU": 0
-        },
-        {
-          "network": "XiaoMi",
-          "MAU": 0
-        },
-        {
-          "network": "Oppo",
-          "MAU": 246500000
-        },
-        {
-          "network": "Sephora",
-          "MAU": 355000000
-        },
-        {
-          "network": "ColdStorage",
-          "MAU": 0
-        },
-        {
-          "network": "Carrefour",
-          "MAU": 500000000
-        },
-        {
-          "network": "Walmat",
-          "MAU": 624000000
-        },
-        {
-          "network": "BodyShop",
-          "MAU": 329500000
-        },
-        {
-          "network": "Lenovo",
-          "MAU": 1000000000
-        },
-        {
-          "network": "Sephora",
-          "MAU": 431000000
-        },
-        {
-          "network": "LV",
-          "MAU": 1433333333
-        },
-        {
-          "network": "FiveGuys",
-          "MAU": 1900000000
-        }
-      ]
-    }
-    
-    chart.data = JSON.parse(JSON.stringify(allData[year]));
-    categoryAxis.zoom({ start: 0, end: 1 / chart.data.length });
-    
-    series.events.on("inited", function() {
-      setTimeout(function() {
-        playButton.isActive = true; // this starts interval
-      }, 2000)
-    })
-    
-    }); // end am4core.ready()
-    </script>
-
-    <!-- Third Chart -->
-    <!-- Styles -->
+//     <!-- Chart code -->
+ 
 <style>
-    #chartdiv3 {
-      width: 100%;
-      height: 800px;
-    }
-    </style>
+ #chartdiv3 {
+width: 100%;
+height: 800px;
+}
+</style>
     
-    <!-- Resources -->
-    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
-    
-    <!-- Chart code -->
-    <script>
-    am4core.ready(function() {
-    
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-    
-    var chart = am4core.create("chartdiv3", am4charts.ChordDiagram);
+<!-- Resources -->
+ <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+ <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
-    var title = chart.titles.create();
-    title.text = "Market Basket Analysis";
-    title.fontSize = 25;
-    title.fontFamily = 'Josefin Sans, sans-serif';
-    title.marginTop = 100;
-    
-    // colors of main characters
-    chart.colors.saturation = 0.45;
-    chart.colors.step = 3;
-    var colors = {
-        Shakeshack:chart.colors.next(),
-        Adidas:chart.colors.next(),
-        FiveGuys:chart.colors.next(),
-        Nike:chart.colors.next(),
-        Uniqlo:chart.colors.next(),
-        Sephora:chart.colors.next()
-    }
-    
-    // data was provided by: https://www.reddit.com/user/notrudedude
-    
-    chart.data = [
-    // node property fields take data from data items where they are first mentioned, that's 
-    // why we add empty data items at the beginning and set colors here
-    {"from":"Adidas", "image":"Adidas.png", "color":colors.Adidas},
-    {"from":"Shakeshack", "image":"Shakeshack.png", "color":colors.Shakeshack},
-    {"from":"Sephora", "image":"Sephora.png", "color":colors.Sephora},
-    {"from":"Nike", "image":"Nike.png", "color":colors.Nike},
-    {"from":"Uniqlo", "color":colors.Uniqlo, "image":"Uniqlo.png",},
-    {"from":"FiveGuys", "image":"FiveGuys.png", "color":colors.FiveGuys},
-    
-    // real data
-
-    {"from":"Adidas","to":"Loreal","value":16},
-    {"from":"Adidas","to":"Lenovo","value":1},
-    {"from":"Adidas","to":"Dell","value":1},
-    {"from":"Adidas","to":"Dove","value":10},
-    {"from":"Adidas","to":"Body Shop","value":3},
-    {"from":"Shakeshack","to":"Burger King","value":2},
-    {"from":"Sephora","to":"Laneige","value":3},
-    {"from":"Sephora","to":"HP","value":1},
-    {"from":"Sephora","to":"Dettol","value":5},
-    {"from":"Nike","to":"CarreFour","value":12},
-    {"from":"Nike","to":"New Balance","value":11},
-    {"from":"Pizza Hut","to":"Pandora","value":3},
-    {"from":"LV","to":"LG","value":5}]
-    
-    
-    
-    chart.dataFields.fromName = "from";
-    chart.dataFields.toName = "to";
-    chart.dataFields.value = "value";
-    
-    
-    chart.nodePadding = 0.5;
-    chart.minNodeSize = 0.01;
-    chart.startAngle = 80;
-    chart.endAngle = chart.startAngle + 360;
-    chart.sortBy = "value";
-    chart.fontSize = 10;
-    
-    var nodeTemplate = chart.nodes.template;
-    nodeTemplate.readerTitle = "Click to show/hide or drag to rearrange";
-    nodeTemplate.showSystemTooltip = true;
-    nodeTemplate.propertyFields.fill = "color";
-    nodeTemplate.tooltipText = "{name}'s Sales: {total}";
-    
-    // when rolled over the node, make all the links rolled-over
-    nodeTemplate.events.on("over", function(event) {    
-        var node = event.target;
-        node.outgoingDataItems.each(function(dataItem) {
-            if(dataItem.toNode){
-                dataItem.link.isHover = true;
-                dataItem.toNode.label.isHover = true;
-            }
-        })
-        node.incomingDataItems.each(function(dataItem) {
-            if(dataItem.fromNode){
-                dataItem.link.isHover = true;
-                dataItem.fromNode.label.isHover = true;
-            }
-        }) 
-    
-        node.label.isHover = true;   
-    })
-    
-    // when rolled out from the node, make all the links rolled-out
-    nodeTemplate.events.on("out", function(event) {
-        var node = event.target;
-        node.outgoingDataItems.each(function(dataItem) {        
-            if(dataItem.toNode){
-                dataItem.link.isHover = false;                
-                dataItem.toNode.label.isHover = false;
-            }
-        })
-        node.incomingDataItems.each(function(dataItem) {
-            if(dataItem.fromNode){
-                dataItem.link.isHover = false;
-               dataItem.fromNode.label.isHover = false;
-            }
-        })
-    
-        node.label.isHover = false;
-    })
-    
-    var label = nodeTemplate.label;
-    label.relativeRotation = 90;
-    
-    label.fillOpacity = 0.4;
-    let labelHS = label.states.create("hover");
-    labelHS.properties.fillOpacity = 1;
-    
-    nodeTemplate.cursorOverStyle = am4core.MouseCursorStyle.pointer;
-    // this adapter makes non-main character nodes to be filled with color of the main character which he/she kissed most
-    nodeTemplate.adapter.add("fill", function(fill, target) {
-        let node = target;
-        let counters = {};
-        let mainChar = false;
-        node.incomingDataItems.each(function(dataItem) {
-            if(colors[dataItem.toName]){
-                mainChar = true;
-            }
-    
-            if(isNaN(counters[dataItem.fromName])){
-                counters[dataItem.fromName] = dataItem.value;
-            }
-            else{
-                counters[dataItem.fromName] += dataItem.value;
-            }
-        })
-        if(mainChar){
-            return fill;
-        }
-    
-        let count = 0;
-        let color;
-        let biggest = 0;
-        let biggestName;
-    
-        for(var name in counters){
-            if(counters[name] > biggest){
-                biggestName = name;
-                biggest = counters[name]; 
-            }        
-        }
-        if(colors[biggestName]){
-            fill = colors[biggestName];
-        }
-      
-        return fill;
-    })
-    
-    // link template
-    var linkTemplate = chart.links.template;
-    linkTemplate.strokeOpacity = 0;
-    linkTemplate.fillOpacity = 0.15;
-    linkTemplate.tooltipText = "{fromName} & {toName}:{value.value}";
-    
-    var hoverState = linkTemplate.states.create("hover");
-    hoverState.properties.fillOpacity = 0.7;
-    hoverState.properties.strokeOpacity = 0.7;
-    
-    // data credit label
-    // var creditLabel = chart.chartContainer.createChild(am4core.TextLink);
-    // creditLabel.text = "Data source: notrudedude";
-    // creditLabel.url = "https://www.reddit.com/user/notrudedude";
-    // creditLabel.y = am4core.percent(99);
-    // creditLabel.x = am4core.percent(99);
-    // creditLabel.horizontalCenter = "right";
-    // creditLabel.verticalCenter = "bottom";    
-    }); // end am4core.ready()
-    </script>
-
-
-
-    
-    
 </body>
 </html>

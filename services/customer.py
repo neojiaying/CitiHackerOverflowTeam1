@@ -68,7 +68,6 @@ class Voucher(db.Model):
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
     brand = db.Column(db.String(64), nullable=False)
 
-
     def __init__(self, voucherid, vouchername, vouchercost, voucheramt, brand): #Initialise the objects
         self.voucherid = voucherid
         self.vouchername = vouchername
@@ -183,12 +182,10 @@ def getvouchersbyuser():
         eprint(purchase)
         vouchers = []
         statuses = []
-        expirydates = []
         for p in purchase:
             vouchers.append(p.voucherid)
             statuses.append(p.status)
-            expirydates.append(p.expirydate)
-        return jsonify({'vouchers':vouchers, 'status': statuses, 'expirydate': expirydates}), 200
+        return jsonify({'vouchers':vouchers, 'status': statuses}), 200
     else:
         return 500
 
@@ -204,9 +201,26 @@ def getallvouchers():
     else:
         return 500
 
+@app.route("/getPurchasesStat", methods=['GET'])
+def getPurchasesStat():
+    purchases = Purchase.query.all()
+    vouchers = Voucher.query.all()
+    data = {}
+    cost = {}
+    brand = {}
+    for v in vouchers:
+        data[v.brand] = {'purchaseAmount':0, 'numRedeemed':0, 'numPurchased':0}
+        cost[v.voucherid] = v.vouchercost
+        brand[v.voucherid] = v.brand
+    for p in purchases:
+        data[brand[p.voucherid]]['purchaseAmount'] += cost[p.voucherid]
+        data[brand[p.voucherid]]['numRedeemed'] += 1 if p.status == 'Redemed' else 0
+        data[brand[p.voucherid]]['numPurchased'] += 1
+
+    return jsonify(data), 200
+    
 
 def makepayment(credit, cost):
-
     return True
 
 if __name__ == '__main__':
