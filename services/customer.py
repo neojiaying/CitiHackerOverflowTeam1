@@ -182,10 +182,12 @@ def getvouchersbyuser():
         eprint(purchase)
         vouchers = []
         statuses = []
+        expirydates = []
         for p in purchase:
             vouchers.append(p.voucherid)
             statuses.append(p.status)
-        return jsonify({'vouchers':vouchers, 'status': statuses}), 200
+            expirydates.append(p.expirydate)
+        return jsonify({'vouchers':vouchers, 'status': statuses,'expirydate': expirydates}), 200
     else:
         return 500
 
