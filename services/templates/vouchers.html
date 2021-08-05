@@ -203,9 +203,9 @@
                             </div>`
                         }else{
                             document.getElementById("displayvouchers-expired").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
-                            <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
+                            <img class="w-100 pb-3" style="opacity:0.5;filter:alpha(opacity=50)" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
                             <center><button id = 'redeembtn' disabled onclick=redeemQr('${dataObj['vouchers'][i]}') style="background:grey" class="btn view-btn1 redeem-btn">Expired</a></center>
-                            </div>`
+                        </div>`
                         }
                         
                     }else{
