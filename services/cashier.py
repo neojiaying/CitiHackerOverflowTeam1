@@ -139,6 +139,19 @@ def voucherdetails():
     else:
         return jsonify("Login Failed"), 500 
 
+# @app.route("/addvoucher", methods=['POST'])
+# def addvoucher():
+#     data = request.get_json()
+#     voucherid = data['voucherid']
+#     vouchername = data['vouchername']
+#     vouchercost = data['voucheramt']
+#     voucheramt = data['voucheramt']
+#     brand = data['brand']
+#     voucher = Voucher(voucherid, vouchername, vouchercost, voucheramt, brand)
+#     db.session.add(voucher)
+#     db.session.commit()
+#     return jsonify({'message':'Voucher Added'}), 200
+
 
 def updateDB():
     return

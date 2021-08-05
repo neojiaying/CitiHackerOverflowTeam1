@@ -195,10 +195,10 @@
                             <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
                         </div>`
                     }
-                    else if (dataObj['status'][i]=='Used'){
+                    else if (dataObj['status'][i]=='Redeemed'){
                         document.getElementById("displayvouchers-used").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
-                            <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
-                            <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
+                            <img class="w-100 pb-3" style="opacity:0.5;filter:alpha(opacity=50)" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
+                            <center><button id = 'redeembtn' disabled onclick=redeemQr('${dataObj['vouchers'][i]}') style="background:grey" class="btn view-btn1 redeem-btn">Redeemed</a></center>
                         </div>`
                     }
                     else if (dataObj['status'][i]=='Expired'){
