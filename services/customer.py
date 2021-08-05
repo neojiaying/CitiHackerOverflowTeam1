@@ -68,6 +68,7 @@ class Voucher(db.Model):
     voucheramt = db.Column(db.Float(precision=2), nullable=False)
     brand = db.Column(db.String(64), nullable=False)
 
+
     def __init__(self, voucherid, vouchername, vouchercost, voucheramt, brand): #Initialise the objects
         self.voucherid = voucherid
         self.vouchername = vouchername
@@ -182,10 +183,12 @@ def getvouchersbyuser():
         eprint(purchase)
         vouchers = []
         statuses = []
+        expirydates = []
         for p in purchase:
             vouchers.append(p.voucherid)
             statuses.append(p.status)
-        return jsonify({'vouchers':vouchers, 'status': statuses}), 200
+            expirydates.append(p.expirydate)
+        return jsonify({'vouchers':vouchers, 'status': statuses, 'expirydate': expirydates}), 200
     else:
         return 500
 

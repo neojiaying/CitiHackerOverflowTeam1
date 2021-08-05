@@ -182,43 +182,41 @@
         request.setRequestHeader("Access-Control-Allow-Origin", "*");
         request.setRequestHeader("Access-Control-Allow-Methods", "*");
         request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+        var todate = new Date();
+        // formatDate(todate, "yyyy-mm-dd hh:mm:ss");
+        // alert(todate);
         request.onreadystatechange = function() {
             if(this.readyState == 4 && this.status == 200) {
                 returnText = this.responseText;
                 dataObj = JSON.parse(returnText);
-                console.log(dataObj);
+                // console.log(dataObj);
+                
                 for(var i in dataObj['vouchers']){
+                    const voucherDate = Date.parse(dataObj['expirydate'][i]);
+                    console.log(voucherDate > todate);
                     console.log(dataObj['vouchers'][i])
                     if (dataObj['status'][i]=='Redeemable'){
-                        document.getElementById("displayvouchers-unused").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
+                        if(voucherDate > todate){
+                            document.getElementById("displayvouchers-unused").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
                             <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
                             <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
-                        </div>`
-                    }
-                    else if (dataObj['status'][i]=='Redeemed'){
+                            </div>`
+                        }else{
+                            document.getElementById("displayvouchers-expired").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
+                            <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
+                            <center><button id = 'redeembtn' disabled onclick=redeemQr('${dataObj['vouchers'][i]}') style="background:grey" class="btn view-btn1 redeem-btn">Expired</a></center>
+                            </div>`
+                        }
+                        
+                    }else{
                         document.getElementById("displayvouchers-used").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
                             <img class="w-100 pb-3" style="opacity:0.5;filter:alpha(opacity=50)" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
                             <center><button id = 'redeembtn' disabled onclick=redeemQr('${dataObj['vouchers'][i]}') style="background:grey" class="btn view-btn1 redeem-btn">Redeemed</a></center>
                         </div>`
-                    }
-                    else if (dataObj['status'][i]=='Expired'){
-                        document.getElementById("displayvouchers-expired").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
-                            <img class="w-100 pb-3" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
-                            <center><button id = 'redeembtn' onclick=redeemQr('${dataObj['vouchers'][i]}') class="btn view-btn1 redeem-btn">Redeem Now</a></center>
-                        </div>`
-                    }
-                    else {
-                        document.getElementById("displayvouchers-unused").innerHTML += `<div class="col-lg-6 col-md-6 pb-5">
-                            <img class="w-100 pb-3" style="opacity:0.5;filter:alpha(opacity=50)" src="../static/img/vouchers/${dataObj['vouchers'][i]}.jpg">
-                            <center><button id = 'redeembtn' disabled onclick=redeemQr('${dataObj['vouchers'][i]}') style="background:grey" class="btn view-btn1 redeem-btn">Redeemed</a></center>
-                        </div>`
-                    }
-                }
-            }else{
-                // console.log(this.responseText)
-                //Prompt Error Message
-            }
-        };
+                    }}
+                    
+                
+        }};
         request.send(JSON.stringify(data));
         function redeemQr(id){
             let userid = window.sessionStorage.getItem("userid");
