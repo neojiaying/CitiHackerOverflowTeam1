@@ -104,6 +104,40 @@
                 </div>
                 </div>
             </div>
+            <!-- <div class="row align-items-center">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="login_part_form">
+                        <div class="login_part_form_iner">
+                            <h3>Add in New Voucher<br></h3>
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="nvoucherid" name="voucherid" value=""
+                                        placeholder="Voucher id">
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="nvouchername" name="vouchername" value=""
+                                        placeholder="Voucher name">
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="nvouchercost" name="vouchercost" value=""
+                                        placeholder="Voucher cost">
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="nvoucheramt" name="voucheramt" value=""
+                                        placeholder="Voucher amount">
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="brand" name="brand" value=""
+                                        placeholder="Brand">
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <button id='registerBtn' onclick=addvoucher()  class="btn_3">
+                                        Add New Voucher
+                                    </button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
         </div>
         <!-- Popular Items End -->
     </main>
@@ -217,7 +251,7 @@
                     console.log(returnText);
                     dataObj = JSON.parse(returnText);
                     status = dataObj['message'];
-                    document.getElementById('status').innerText = 'Status = '+status;
+                    document.getElementById('status').innerText = 'Status: '+status;
                     scannedid='';
                 }else{
                     // console.log(this.responseText)
@@ -226,6 +260,35 @@
             };
             request.send(JSON.stringify(data));
         };
+        // function addvoucher(){
+        //     var voucherid = document.getElementById('nvoucherid').value;
+        //     var vouchername = document.getElementById('nvouchername').value;
+        //     var vouchercost = document.getElementById('nvouchercost').value;
+        //     var voucheramt = document.getElementById('nvoucheramt').value;
+        //     var brand = document.getElementById('brand').value;
+        //     var request = new XMLHttpRequest();
+        //     var data = {'voucherid': voucherid, 'vouchername': vouchername, 'vouchercost': parseInt(vouchercost), 'voucheramt':parseInt(voucheramt), 'brand':brand};
+        //     console.log(data);
+        //     request.open("POST", "http://127.0.0.1:5030/addvoucher", true);
+        //     request.setRequestHeader("Content-type", "application/json");
+        //     request.setRequestHeader("Access-Control-Allow-Origin", "*");
+        //     request.setRequestHeader("Access-Control-Allow-Credentials", "True");
+        //     request.onreadystatechange = function() {
+        //         if(this.readyState == 4 && this.status == 200) {
+        //             returnText = this.responseText;
+        //             console.log(returnText);
+        //             swal({
+        //                 title: "Success!",
+        //                 text:"Voucher Added 😊",
+        //                 icon:"success"});
+        //             window.local.href='index';
+        //         }else{
+        //             // console.log(this.responseText)
+        //             //Prompt Error Message
+        //         }
+        //     };
+        //     request.send(JSON.stringify(data));
+        // };
 
 
         // Modal for Scanning
@@ -240,7 +303,7 @@
     </script>
 
 
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script src="../static/js/vendor/modernizr-3.5.0.min.js"></script>
     <!-- Jquery, Popper, Bootstrap -->
